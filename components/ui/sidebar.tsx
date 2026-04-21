@@ -310,6 +310,8 @@ export {
   SidebarNavBadge,
   SidebarNavItem,
   SidebarNavList,
+  sidebarNavItemVariants,
   SidebarSeparator,
   SidebarUser,
+  useSidebarVariant,
 }

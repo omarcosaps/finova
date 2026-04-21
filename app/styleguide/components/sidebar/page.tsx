@@ -1,20 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { DsIcon, Icons } from "@/app/styleguide/icons"
-import {
-  Sidebar,
-  SidebarAvatar,
-  SidebarBrand,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarNav,
-  SidebarNavBadge,
-  SidebarNavItem,
-  SidebarNavList,
-  SidebarSeparator,
-  SidebarUser,
-} from "@/components/ui/sidebar"
+import { FinovaAppSidebar } from "@/components/finova/finova-app-sidebar"
 
 function ThemeToggle() {
   const [isDark, setIsDark] = React.useState(true)
@@ -76,81 +63,6 @@ function CodeBlock({ children }: { children: React.ReactNode }) {
   )
 }
 
-function FinovaSidebarDemo() {
-  return (
-    <Sidebar variant="finova" className="h-[560px] rounded-2xl ring-1 ring-white/10">
-      <SidebarHeader>
-        <SidebarBrand
-          title="Finova"
-          logo={<DsIcon icon={Icons.wallet} />}
-        />
-      </SidebarHeader>
-
-      <SidebarNav aria-label="Principal">
-        <SidebarNavList>
-          <SidebarNavItem
-            href="#resumo"
-            active
-            icon={<DsIcon icon={Icons.gridView} />}
-          >
-            Resumo
-          </SidebarNavItem>
-          <SidebarNavItem
-            href="#transacoes"
-            icon={<DsIcon icon={Icons.arrowLeftRight} />}
-          >
-            Transações
-          </SidebarNavItem>
-          <SidebarNavItem
-            href="#cartoes"
-            icon={<DsIcon icon={Icons.creditCard} />}
-          >
-            Cartões
-          </SidebarNavItem>
-          <SidebarNavItem
-            href="#alertas"
-            icon={<DsIcon icon={Icons.notification} />}
-            badge={<SidebarNavBadge>3</SidebarNavBadge>}
-          >
-            Alertas
-          </SidebarNavItem>
-          <SidebarNavItem
-            href="#relatorios"
-            icon={<DsIcon icon={Icons.pieChart} />}
-          >
-            Relatórios
-          </SidebarNavItem>
-          <SidebarNavItem
-            href="#categorias"
-            icon={<DsIcon icon={Icons.tag} />}
-          >
-            Categorias
-          </SidebarNavItem>
-        </SidebarNavList>
-      </SidebarNav>
-
-      <SidebarFooter>
-        <SidebarSeparator />
-        <SidebarNav aria-label="Conta">
-          <SidebarNavList>
-            <SidebarNavItem
-              href="#configuracoes"
-              icon={<DsIcon icon={Icons.settings} />}
-            >
-              Configurações
-            </SidebarNavItem>
-          </SidebarNavList>
-        </SidebarNav>
-        <SidebarUser
-          avatar={<SidebarAvatar>AB</SidebarAvatar>}
-          name="Ana Boutik"
-          subtitle="Admin"
-        />
-      </SidebarFooter>
-    </Sidebar>
-  )
-}
-
 export default function SidebarShowcasePage() {
   return (
     <div className="mx-auto max-w-5xl space-y-12 px-6 py-10 lg:px-10 lg:py-12">
@@ -181,7 +93,10 @@ export default function SidebarShowcasePage() {
           perfil com iniciais.
         </p>
         <div className="inline-flex rounded-2xl border border-border bg-neutral-950 p-4 ring-1 ring-border/60">
-          <FinovaSidebarDemo />
+          <FinovaAppSidebar
+            activeItem="resumo"
+            className="h-[560px] rounded-2xl ring-1 ring-white/10"
+          />
         </div>
       </section>
 
