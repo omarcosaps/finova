@@ -15,15 +15,12 @@ export default function StyleguideLayout({
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="fixed top-0 left-0 flex h-screen w-64 flex-col gap-6 overflow-y-auto border-r border-border bg-card p-6">
-        <div>
-          <Link
-            href="/styleguide"
-            className="text-lg font-semibold tracking-tight text-foreground"
-          >
-            Design System
-          </Link>
-          <p className="mt-1 text-xs text-muted-foreground">Styleguide</p>
-        </div>
+        <Link
+          href="/styleguide"
+          className="text-lg font-semibold tracking-tight text-foreground"
+        >
+          Design System
+        </Link>
 
         <nav className="flex flex-col gap-6">
           {navigation.map((section) => (
