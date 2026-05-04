@@ -25,8 +25,12 @@ export const navigation: NavSection[] = [
       { name: "Breadcrumb", href: "/styleguide/components/breadcrumb" },
       { name: "Accordion", href: "/styleguide/components/accordion" },
       { name: "Data Table", href: "/styleguide/components/data-table" },
+      { name: "Dialog", href: "/styleguide/components/dialog" },
+      { name: "Pagination", href: "/styleguide/components/pagination" },
       { name: "Radio Group", href: "/styleguide/components/radio-group" },
+      { name: "Select", href: "/styleguide/components/select" },
       { name: "Sidebar", href: "/styleguide/components/sidebar" },
+      { name: "Tooltip", href: "/styleguide/components/tooltip" },
     ],
   },
 ]
