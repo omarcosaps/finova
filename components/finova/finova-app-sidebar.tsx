@@ -32,7 +32,7 @@ export type FinovaNavKey =
 const NAV_HREFS: Record<FinovaNavKey, string> = {
   resumo: "/",
   transacoes: "/transacoes",
-  cartoes: "#cartoes",
+  cartoes: "/cartoes",
   alertas: "#alertas",
   relatorios: "#relatorios",
   categorias: "#categorias",
