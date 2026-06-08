@@ -33,10 +33,10 @@ const NAV_HREFS: Record<FinovaNavKey, string> = {
   resumo: "/",
   transacoes: "/transacoes",
   cartoes: "/cartoes",
-  alertas: "#alertas",
-  relatorios: "#relatorios",
-  categorias: "#categorias",
-  configuracoes: "#configuracoes",
+  alertas: "/alertas",
+  relatorios: "/relatorios",
+  categorias: "/categorias",
+  configuracoes: "/configuracoes",
 }
 
 type FinovaNavItemLinkProps = {
