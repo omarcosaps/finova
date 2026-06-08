@@ -27,6 +27,7 @@ export const navigation: NavSection[] = [
       { name: "Data Table", href: "/styleguide/components/data-table" },
       { name: "Dialog", href: "/styleguide/components/dialog" },
       { name: "Drawer", href: "/styleguide/components/drawer" },
+      { name: "Empty", href: "/styleguide/components/empty" },
       { name: "Field", href: "/styleguide/components/field" },
       { name: "Pagination", href: "/styleguide/components/pagination" },
       { name: "Radio Group", href: "/styleguide/components/radio-group" },
