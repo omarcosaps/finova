@@ -24,6 +24,7 @@ export const navigation: NavSection[] = [
       { name: "Chart", href: "/styleguide/components/chart" },
       { name: "Breadcrumb", href: "/styleguide/components/breadcrumb" },
       { name: "Accordion", href: "/styleguide/components/accordion" },
+      { name: "Avatar", href: "/styleguide/components/avatar" },
       { name: "Data Table", href: "/styleguide/components/data-table" },
       { name: "Dialog", href: "/styleguide/components/dialog" },
       { name: "Drawer", href: "/styleguide/components/drawer" },
