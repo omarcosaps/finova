@@ -36,6 +36,7 @@ export const navigation: NavSection[] = [
       { name: "Radio Group", href: "/styleguide/components/radio-group" },
       { name: "Select", href: "/styleguide/components/select" },
       { name: "Sidebar", href: "/styleguide/components/sidebar" },
+      { name: "Switch", href: "/styleguide/components/switch" },
       { name: "Tooltip", href: "/styleguide/components/tooltip" },
     ],
   },
