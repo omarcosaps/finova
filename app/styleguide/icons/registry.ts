@@ -11,7 +11,10 @@ import {
   ArrowRight01Icon,
   ArrowUp01Icon,
   ArrowUpRight01Icon,
+  BarChartIcon,
   Calendar01Icon,
+  ChartDecreaseIcon,
+  ChartIncreaseIcon,
   CreditCardIcon,
   Download01Icon,
   FilterIcon,
@@ -36,6 +39,7 @@ export const Icons = {
   arrowLeft: ArrowLeft01Icon,
   arrowUp: ArrowUp01Icon,
   arrowUpRight: ArrowUpRight01Icon,
+  barChart: BarChartIcon,
   arrowRight: ArrowRight01Icon,
   arrowLeftRight: ArrowLeftRightIcon,
   calendar: Calendar01Icon,
@@ -50,6 +54,8 @@ export const Icons = {
   pieChart: PieChartIcon,
   tag: Tag01Icon,
   settings: Settings01Icon,
+  trendingDown: ChartDecreaseIcon,
+  trendingUp: ChartIncreaseIcon,
 } as const
 
 export type IconName = keyof typeof Icons
