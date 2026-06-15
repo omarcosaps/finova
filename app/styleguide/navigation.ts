@@ -34,6 +34,7 @@ export const navigation: NavSection[] = [
       { name: "Empty", href: "/styleguide/components/empty" },
       { name: "Field", href: "/styleguide/components/field" },
       { name: "Pagination", href: "/styleguide/components/pagination" },
+      { name: "Progress", href: "/styleguide/components/progress" },
       { name: "Radio Group", href: "/styleguide/components/radio-group" },
       { name: "Select", href: "/styleguide/components/select" },
       { name: "Sheet", href: "/styleguide/components/sheet" },
