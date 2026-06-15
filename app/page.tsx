@@ -4,7 +4,7 @@ import { ResumoView } from "./resumo-view"
 
 export const metadata: Metadata = {
   title: "Resumo",
-  description: "Panorama financeiro da sua conta corporativa.",
+  description: "Acompanhe o desempenho financeiro do seu negócio.",
 }
 
 export default function ResumoPage() {
