@@ -14,7 +14,7 @@ function useSidebarVariant() {
 }
 
 const sidebarVariants = cva(
-  "flex h-full min-h-0 w-[260px] shrink-0 flex-col gap-6 px-4 py-6",
+  "flex h-full min-h-0 w-[260px] shrink-0 flex-col gap-6 overflow-hidden px-4 py-6",
   {
     variants: {
       variant: {
@@ -87,7 +87,7 @@ function SidebarNav({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
       data-slot="sidebar-nav"
-      className={cn("min-h-0 flex-1", className)}
+      className={cn("min-h-0 shrink-0", className)}
       {...props}
     />
   )
@@ -222,7 +222,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-footer"
-      className={cn("flex shrink-0 flex-col gap-4", className)}
+      className={cn("mt-auto flex shrink-0 flex-col gap-4", className)}
       {...props}
     />
   )
