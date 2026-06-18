@@ -125,7 +125,7 @@ export default function SidebarShowcasePage() {
   <SidebarHeader>
     <SidebarBrand title="Finova" logo={<DsIcon icon={Icons.wallet} />} />
   </SidebarHeader>
-  <SidebarNav aria-label="Principal">
+  <SidebarNav aria-label="Principal" className="min-h-0 flex-1">
     <SidebarNavList>
       <SidebarNavItem href="/" active icon={...}>
         Resumo

@@ -106,7 +106,7 @@ export function FinovaAppSidebar({ activeItem, className }: FinovaAppSidebarProp
         />
       </SidebarHeader>
 
-      <SidebarNav aria-label="Principal">
+      <SidebarNav aria-label="Principal" className="min-h-0 flex-1">
         <SidebarNavList>
           <FinovaNavItemLink
             href={NAV_HREFS.resumo}

@@ -81,16 +81,16 @@ export function TransacoesView() {
   const canNext = safePage < pageCount - 1
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground md:flex-row">
-      <div className="shrink-0 border-b border-border md:w-[260px] md:border-b-0 md:border-r">
+    <div className="flex h-screen overflow-hidden flex-col bg-background text-foreground md:flex-row">
+      <div className="shrink-0 border-b border-border md:flex md:h-full md:w-[260px] md:flex-col md:border-b-0 md:border-r">
         <FinovaAppSidebar
           activeItem="transacoes"
-          className="h-auto min-h-0 w-full md:h-screen md:min-h-screen"
+          className="h-auto min-h-0 w-full md:h-full"
         />
       </div>
 
       <main
-        className="flex min-w-0 flex-1 flex-col p-6 md:p-8"
+        className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto p-6 md:p-8"
         aria-label="Transações e movimentos"
       >
         <header className="flex flex-col gap-4 pb-6 md:flex-row md:items-start md:justify-between md:pb-8">
