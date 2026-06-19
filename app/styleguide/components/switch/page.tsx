@@ -422,12 +422,20 @@ export default function SwitchShowcasePage() {
                 <td className="px-4 py-3 text-muted-foreground">Trilho no estado ligado (--ring)</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-mono text-xs text-foreground">bg-background</td>
-                <td className="px-4 py-3 text-muted-foreground">Polegar (thumb) no estado ligado</td>
+                <td className="px-4 py-3 font-mono text-xs text-foreground">group-data-unchecked/switch:bg-background</td>
+                <td className="px-4 py-3 text-muted-foreground">Polegar desligado em light mode</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-mono text-xs text-foreground">dark:bg-foreground</td>
+                <td className="px-4 py-3 font-mono text-xs text-foreground">dark:group-data-unchecked/switch:bg-foreground</td>
                 <td className="px-4 py-3 text-muted-foreground">Polegar desligado em dark mode</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3 font-mono text-xs text-foreground">group-data-checked/switch:bg-primary-foreground</td>
+                <td className="px-4 py-3 text-muted-foreground">Polegar ligado em light mode</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3 font-mono text-xs text-foreground">dark:group-data-checked/switch:bg-foreground</td>
+                <td className="px-4 py-3 text-muted-foreground">Polegar ligado em dark mode</td>
               </tr>
               <tr>
                 <td className="px-4 py-3 font-mono text-xs text-foreground">ring-ring/50</td>
