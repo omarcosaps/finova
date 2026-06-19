@@ -4,6 +4,7 @@
  */
 import {
   Add01Icon,
+  Alert01Icon,
   ArrowDown01Icon,
   ArrowDownLeft01Icon,
   ArrowLeft01Icon,
@@ -12,6 +13,7 @@ import {
   ArrowUp01Icon,
   ArrowUpRight01Icon,
   BarChartIcon,
+  Building01Icon,
   Calendar01Icon,
   ChartDecreaseIcon,
   ChartIncreaseIcon,
@@ -19,12 +21,16 @@ import {
   Download01Icon,
   FilterIcon,
   GridViewIcon,
+  MonitorDotIcon,
+  Moon01Icon,
   MoreHorizontalCircle01Icon,
   Notification01Icon,
   PieChartIcon,
   Settings01Icon,
+  Sun01Icon,
   Tag01Icon,
   Tick02Icon,
+  UserCircleIcon,
   Wallet01Icon,
 } from "@hugeicons/core-free-icons"
 
@@ -32,6 +38,7 @@ export const DEFAULT_ICON_STROKE = 2 as const
 
 export const Icons = {
   add: Add01Icon,
+  alertTriangle: Alert01Icon,
   arrowDown: ArrowDown01Icon,
   /** Mesmo trac.svg que "seta para baixo" em controlos (ex. dropdown). */
   chevronDown: ArrowDown01Icon,
@@ -40,13 +47,18 @@ export const Icons = {
   arrowUp: ArrowUp01Icon,
   arrowUpRight: ArrowUpRight01Icon,
   barChart: BarChartIcon,
+  building: Building01Icon,
   arrowRight: ArrowRight01Icon,
   arrowLeftRight: ArrowLeftRightIcon,
   calendar: Calendar01Icon,
   download: Download01Icon,
   filter: FilterIcon,
+  monitor: MonitorDotIcon,
+  moon: Moon01Icon,
   moreHorizontal: MoreHorizontalCircle01Icon,
+  sun: Sun01Icon,
   tick: Tick02Icon,
+  user: UserCircleIcon,
   wallet: Wallet01Icon,
   gridView: GridViewIcon,
   creditCard: CreditCardIcon,

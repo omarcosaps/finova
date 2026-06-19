@@ -4,7 +4,7 @@ import { ConfiguracoesView } from "./configuracoes-view"
 
 export const metadata: Metadata = {
   title: "Configurações",
-  description: "Preferências da conta, notificações e limites.",
+  description: "Gerencie preferências da conta e do sistema.",
 }
 
 export default function ConfiguracoesPage() {
