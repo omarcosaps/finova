@@ -6,6 +6,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { DsIcon, Icons } from "@/app/styleguide/icons"
 import { FinovaPageShell } from "@/components/finova/finova-page-shell"
+import { NovaTransacaoDrawer } from "@/components/finova/nova-transacao-drawer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -143,6 +144,7 @@ function TransactionRow({ transaction }: { transaction: RecentTransaction }) {
 
 export function ResumoView() {
   const [period, setPeriod] = React.useState<ResumoPeriodLabel>("Este Mês")
+  const [novaTransacaoOpen, setNovaTransacaoOpen] = React.useState(false)
 
   return (
     <FinovaPageShell activeItem="resumo" ariaLabel="Resumo financeiro">
@@ -182,12 +184,22 @@ export function ResumoView() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button type="button" variant="default" size="lg">
+          <Button
+            type="button"
+            variant="default"
+            size="lg"
+            onClick={() => setNovaTransacaoOpen(true)}
+          >
             <DsIcon icon={Icons.add} className="size-4" data-icon="inline-start" />
             Nova Transação
           </Button>
         </div>
       </header>
+
+      <NovaTransacaoDrawer
+        open={novaTransacaoOpen}
+        onOpenChange={setNovaTransacaoOpen}
+      />
 
       <section
         aria-label="Indicadores financeiros"
