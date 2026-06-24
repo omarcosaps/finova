@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { DsIcon, Icons } from "@/app/styleguide/icons"
 import { FinovaAppSidebar } from "@/components/finova/finova-app-sidebar"
+import { NovaTransacaoDrawer } from "@/components/finova/nova-transacao-drawer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,7 +32,6 @@ import {
 import { cn } from "@/lib/utils"
 
 const PAGE_SIZE = 7
-const ALL = buildTransacoesList(TRANSACOES_TOTAL)
 
 const PERIOD_LABELS = ["Este Mês", "Mês passado", "Últimos 3 meses"] as const
 
@@ -69,14 +69,18 @@ export function TransacoesView() {
   const [period, setPeriod] = React.useState<(typeof PERIOD_LABELS)[number]>(
     "Este Mês"
   )
+  const [novaTransacaoOpen, setNovaTransacaoOpen] = React.useState(false)
+  const [transactions, setTransactions] = React.useState(() =>
+    buildTransacoesList(TRANSACOES_TOTAL)
+  )
 
-  const pageCount = Math.max(1, Math.ceil(ALL.length / PAGE_SIZE))
+  const pageCount = Math.max(1, Math.ceil(transactions.length / PAGE_SIZE))
   const safePage = Math.min(
     Math.max(0, page),
     Math.max(0, pageCount - 1)
   )
   const start = safePage * PAGE_SIZE
-  const slice = ALL.slice(start, start + PAGE_SIZE)
+  const slice = transactions.slice(start, start + PAGE_SIZE)
   const canPrev = safePage > 0
   const canNext = safePage < pageCount - 1
 
@@ -145,7 +149,12 @@ export function TransacoesView() {
               />
               Exportar
             </Button>
-            <Button type="button" variant="default" size="lg">
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              onClick={() => setNovaTransacaoOpen(true)}
+            >
               <DsIcon
                 icon={Icons.add}
                 className="size-4"
@@ -155,6 +164,15 @@ export function TransacoesView() {
             </Button>
           </div>
         </header>
+
+        <NovaTransacaoDrawer
+          open={novaTransacaoOpen}
+          onOpenChange={setNovaTransacaoOpen}
+          onSubmit={(transaction) => {
+            setTransactions((prev) => [transaction, ...prev])
+            setPage(0)
+          }}
+        />
 
         <div className="overflow-hidden rounded-2xl border border-border bg-card p-1 ring-1 ring-border/60">
           <Table>
@@ -212,7 +230,7 @@ export function TransacoesView() {
 
           <div className="flex flex-col gap-3 border-t border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">
-              Mostrando {slice.length} de {ALL.length} transações
+              Mostrando {slice.length} de {transactions.length} transações
             </p>
             <div className="flex items-center gap-2">
               <Button

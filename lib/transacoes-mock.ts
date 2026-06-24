@@ -10,6 +10,115 @@ export type Transaction = {
   direction: TransactionDirection
 }
 
+export type NovaTransacaoFormValues = {
+  direction: TransactionDirection
+  description: string
+  valorDisplay: string
+  category: string
+  /** YYYY-MM-DD */
+  date: string
+  sourceId: string
+  notes: string
+}
+
+export type NovaTransacaoFieldErrors = Partial<
+  Record<keyof NovaTransacaoFormValues, string>
+>
+
+export const TRANSACAO_CATEGORIAS: Record<
+  TransactionDirection,
+  readonly string[]
+> = {
+  in: ["Receitas", "Vendas", "Serviços", "Outras receitas"],
+  out: ["Estoque", "Marketing", "Operacional", "Pessoal", "Outras despesas"],
+}
+
+/** IDs alinhados a `CARTOES_PREVIEW` em cartoes-mock.ts */
+export const TRANSACAO_ORIGENS = [
+  { value: "conta-corrente", label: "Conta Corrente Finova" },
+  { value: "pc-9212", label: "Cartão Corporativo •••• 9212" },
+  { value: "vc-4055", label: "Cartão Virtual •••• 4055" },
+] as const
+
+export function getDefaultNovaTransacaoFormValues(): NovaTransacaoFormValues {
+  const today = new Date()
+  return {
+    direction: "out",
+    description: "",
+    valorDisplay: "",
+    category: "",
+    date: today.toISOString().slice(0, 10),
+    sourceId: "",
+    notes: "",
+  }
+}
+
+export function parseValorToCents(value: string): number | null {
+  const trimmed = value.trim()
+  if (!trimmed) return null
+
+  let normalized = trimmed.replace(/R\$\s?/g, "").trim()
+
+  if (normalized.includes(",")) {
+    normalized = normalized.replace(/\./g, "").replace(",", ".")
+  }
+
+  const num = Number.parseFloat(normalized)
+  if (Number.isNaN(num) || num <= 0) return null
+  return Math.round(num * 100)
+}
+
+export function validateNovaTransacaoForm(
+  values: NovaTransacaoFormValues
+): NovaTransacaoFieldErrors {
+  const errors: NovaTransacaoFieldErrors = {}
+
+  if (!values.description.trim()) {
+    errors.description = "Informe a descrição."
+  }
+
+  if (parseValorToCents(values.valorDisplay) === null) {
+    errors.valorDisplay = "Informe um valor maior que zero."
+  }
+
+  if (!values.category) {
+    errors.category = "Selecione uma categoria."
+  } else if (
+    !TRANSACAO_CATEGORIAS[values.direction].includes(values.category)
+  ) {
+    errors.category = "Categoria inválida para o tipo selecionado."
+  }
+
+  if (!values.date) {
+    errors.date = "Selecione a data."
+  }
+
+  if (!values.sourceId) {
+    errors.sourceId = "Selecione a conta ou cartão."
+  }
+
+  return errors
+}
+
+let mockTxCounter = 0
+
+export function createTransactionFromForm(
+  values: NovaTransacaoFormValues,
+  id?: string
+): Transaction {
+  const amountCents = parseValorToCents(values.valorDisplay)!
+  mockTxCounter += 1
+
+  return {
+    id: id ?? `tx-new-${Date.now()}-${mockTxCounter}`,
+    occurredAt: `${values.date}T12:00:00`,
+    description: values.description.trim(),
+    category: values.category,
+    amountCents,
+    direction: values.direction,
+  }
+}
+
 /** 7 linhas de referência (Figma 2949:419); reutilizadas em ciclo para preencher 142. */
 export const TRANSACOES_TOTAL = 142
 
