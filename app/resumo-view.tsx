@@ -4,7 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
-import { DsIcon, Icons, type IconName } from "@/app/styleguide/icons"
+import { DsIcon, Icons } from "@/app/styleguide/icons"
 import { FinovaPageShell } from "@/components/finova/finova-page-shell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -45,13 +45,6 @@ import {
 } from "@/lib/resumo-mock"
 import { cn } from "@/lib/utils"
 
-const KPI_ICONS: Record<string, IconName> = {
-  saldo: "wallet",
-  receitas: "trendingUp",
-  despesas: "trendingDown",
-  lucro: "barChart",
-}
-
 const cashFlowChartConfig = {
   receitas: {
     label: "Receitas",
@@ -82,16 +75,9 @@ const ALERT_STYLES: Record<
 }
 
 function KpiCard({ kpi }: { kpi: ResumoKpi }) {
-  const iconName = KPI_ICONS[kpi.id] ?? "wallet"
-
   return (
     <Card className="flex h-32 flex-col justify-between gap-0 py-6">
-      <CardHeader className="flex items-center gap-2 space-y-0 px-6 pb-0">
-        <DsIcon
-          icon={Icons[iconName]}
-          className="size-4 shrink-0 text-muted-foreground"
-          aria-hidden
-        />
+      <CardHeader className="space-y-0 px-6 pb-0">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {kpi.label}
         </CardTitle>
