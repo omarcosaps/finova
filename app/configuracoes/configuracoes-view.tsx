@@ -2,7 +2,6 @@
 
 import * as React from "react"
 
-import { Icons } from "@/app/styleguide/icons"
 import { ConfiguracoesFormRow } from "@/app/configuracoes/components/configuracoes-form-row"
 import { ConfiguracoesSectionCard } from "@/app/configuracoes/components/configuracoes-section-card"
 import { ConfiguracoesThemeSelector } from "@/app/configuracoes/components/configuracoes-theme-selector"
@@ -93,7 +92,7 @@ export function ConfiguracoesView() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
           <section aria-label="Perfil">
-            <ConfiguracoesSectionCard icon={Icons.user} title="Perfil">
+            <ConfiguracoesSectionCard title="Perfil">
               <div className="space-y-6">
                 <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 items-center gap-4">
@@ -162,7 +161,7 @@ export function ConfiguracoesView() {
           </section>
 
           <section aria-label="Empresa">
-            <ConfiguracoesSectionCard icon={Icons.building} title="Empresa">
+            <ConfiguracoesSectionCard title="Empresa">
               <div className="space-y-6">
                 <ConfiguracoesFormRow
                   label="Nome da empresa"
@@ -247,7 +246,7 @@ export function ConfiguracoesView() {
 
         <div className="flex flex-col gap-6">
           <section aria-label="Notificações">
-            <ConfiguracoesSectionCard icon={Icons.notification} title="Notificações">
+            <ConfiguracoesSectionCard title="Notificações">
               <div className="flex flex-col gap-4">
                 {CONFIGURACOES_NOTIFICACOES.map(({ id, label, description }) => (
                     <div
@@ -283,7 +282,7 @@ export function ConfiguracoesView() {
           </section>
 
           <section aria-label="Aparência">
-            <ConfiguracoesSectionCard icon={Icons.monitor} title="Aparência">
+            <ConfiguracoesSectionCard title="Aparência">
               <div className="space-y-6">
                 <ConfiguracoesThemeSelector value={tema} onChange={setTema} />
 
@@ -311,7 +310,6 @@ export function ConfiguracoesView() {
 
           <section aria-label="Zona de perigo">
             <ConfiguracoesSectionCard
-              icon={Icons.alertTriangle}
               title="ZONA DE PERIGO"
               description="Ações irreversíveis que afetam permanentemente a conta."
               titleClassName="text-destructive"
