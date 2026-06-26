@@ -13,7 +13,7 @@ export type Transaction = {
 export type NovaTransacaoFormValues = {
   direction: TransactionDirection
   description: string
-  valorDisplay: string
+  amountCents: number
   category: string
   /** YYYY-MM-DD */
   date: string
@@ -45,27 +45,12 @@ export function getDefaultNovaTransacaoFormValues(): NovaTransacaoFormValues {
   return {
     direction: "out",
     description: "",
-    valorDisplay: "",
+    amountCents: 0,
     category: "",
     date: today.toISOString().slice(0, 10),
     sourceId: "",
     notes: "",
   }
-}
-
-export function parseValorToCents(value: string): number | null {
-  const trimmed = value.trim()
-  if (!trimmed) return null
-
-  let normalized = trimmed.replace(/R\$\s?/g, "").trim()
-
-  if (normalized.includes(",")) {
-    normalized = normalized.replace(/\./g, "").replace(",", ".")
-  }
-
-  const num = Number.parseFloat(normalized)
-  if (Number.isNaN(num) || num <= 0) return null
-  return Math.round(num * 100)
 }
 
 export function validateNovaTransacaoForm(
@@ -77,8 +62,8 @@ export function validateNovaTransacaoForm(
     errors.description = "Informe a descrição."
   }
 
-  if (parseValorToCents(values.valorDisplay) === null) {
-    errors.valorDisplay = "Informe um valor maior que zero."
+  if (values.amountCents <= 0) {
+    errors.amountCents = "Informe um valor maior que zero."
   }
 
   if (!values.category) {
@@ -106,7 +91,7 @@ export function createTransactionFromForm(
   values: NovaTransacaoFormValues,
   id?: string
 ): Transaction {
-  const amountCents = parseValorToCents(values.valorDisplay)!
+  const amountCents = values.amountCents
   mockTxCounter += 1
 
   return {
@@ -202,12 +187,6 @@ const brDateTime = new Intl.DateTimeFormat("pt-BR", {
   hour12: false,
 })
 
-const money = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-  minimumFractionDigits: 2,
-})
-
 export function formatTransacaoData(iso: string) {
   const d = new Date(iso)
   const parts = brDateTime.formatToParts(d)
@@ -220,6 +199,4 @@ export function formatTransacaoData(iso: string) {
   return `${day} ${monthLabel}, ${hour}:${minute}`
 }
 
-export function formatBRL(cents: number) {
-  return money.format(cents / 100)
-}
+export { formatBRL } from "@/lib/currency"

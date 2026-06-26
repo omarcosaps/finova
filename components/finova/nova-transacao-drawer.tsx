@@ -20,12 +20,7 @@ import {
   FieldSet,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupText,
-} from "@/components/ui/input-group"
+import { CurrencyInput } from "@/components/ui/currency-input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Select,
@@ -208,29 +203,23 @@ export function NovaTransacaoDrawer({
                 ) : null}
               </Field>
 
-              <Field data-invalid={errors.valorDisplay ? true : undefined}>
+              <Field data-invalid={errors.amountCents ? true : undefined}>
                 <FieldLabel htmlFor="nova-tx-valor">Valor</FieldLabel>
-                <InputGroup>
-                  <InputGroupAddon align="inline-start">
-                    <InputGroupText>R$</InputGroupText>
-                  </InputGroupAddon>
-                  <InputGroupInput
-                    id="nova-tx-valor"
-                    value={form.valorDisplay}
-                    onChange={(event) =>
-                      updateField("valorDisplay", event.target.value)
-                    }
-                    inputMode="decimal"
-                    placeholder="0,00"
-                    aria-invalid={errors.valorDisplay ? true : undefined}
-                    aria-describedby={
-                      errors.valorDisplay ? "nova-tx-valor-error" : undefined
-                    }
-                  />
-                </InputGroup>
-                {errors.valorDisplay ? (
+                <CurrencyInput
+                  id="nova-tx-valor"
+                  valueCents={form.amountCents}
+                  onValueCentsChange={(cents) =>
+                    updateField("amountCents", cents)
+                  }
+                  placeholder="0,00"
+                  aria-invalid={errors.amountCents ? true : undefined}
+                  aria-describedby={
+                    errors.amountCents ? "nova-tx-valor-error" : undefined
+                  }
+                />
+                {errors.amountCents ? (
                   <FieldError id="nova-tx-valor-error">
-                    {errors.valorDisplay}
+                    {errors.amountCents}
                   </FieldError>
                 ) : null}
               </Field>
