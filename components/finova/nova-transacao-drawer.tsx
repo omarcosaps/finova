@@ -19,6 +19,7 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field"
+import { DatePicker } from "@/components/ui/date-picker"
 import { Input } from "@/components/ui/input"
 import { CurrencyInput } from "@/components/ui/currency-input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -258,13 +259,10 @@ export function NovaTransacaoDrawer({
 
                 <Field data-invalid={errors.date ? true : undefined}>
                   <FieldLabel htmlFor="nova-tx-data">Data</FieldLabel>
-                  <Input
+                  <DatePicker
                     id="nova-tx-data"
-                    type="date"
                     value={form.date}
-                    onChange={(event) =>
-                      updateField("date", event.target.value)
-                    }
+                    onChange={(value) => updateField("date", value)}
                     aria-invalid={errors.date ? true : undefined}
                     aria-describedby={
                       errors.date ? "nova-tx-data-error" : undefined
