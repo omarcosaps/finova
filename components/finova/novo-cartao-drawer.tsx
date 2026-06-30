@@ -16,8 +16,6 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSet,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
@@ -127,10 +125,7 @@ export function NovoCartaoDrawer({
         >
           <div className="flex-1 overflow-y-auto px-4 py-4">
             <FieldGroup>
-              <FieldSet>
-                <FieldLegend variant="label">Informações do cartão</FieldLegend>
-
-                <Field data-invalid={errors.name ? true : undefined}>
+              <Field data-invalid={errors.name ? true : undefined}>
                   <FieldLabel htmlFor="novo-cartao-nome">
                     Nome do cartão
                   </FieldLabel>
@@ -270,7 +265,6 @@ export function NovoCartaoDrawer({
                     </FieldError>
                   ) : null}
                 </Field>
-              </FieldSet>
             </FieldGroup>
           </div>
 
