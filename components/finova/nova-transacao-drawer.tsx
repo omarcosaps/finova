@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -138,10 +137,6 @@ export function NovaTransacaoDrawer({
       <DrawerContent className="h-full max-h-none sm:max-w-lg">
         <DrawerHeader className="border-b border-border">
           <DrawerTitle>Nova transação</DrawerTitle>
-          <DrawerDescription>
-            Registre uma entrada ou saída financeira. Os dados são salvos
-            localmente nesta demonstração.
-          </DrawerDescription>
         </DrawerHeader>
 
         <form
