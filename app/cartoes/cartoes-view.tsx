@@ -1,9 +1,11 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
 
 import { DsIcon, Icons } from "@/app/styleguide/icons"
 import { FinovaAppSidebar } from "@/components/finova/finova-app-sidebar"
+import { NovoCartaoDrawer } from "@/components/finova/novo-cartao-drawer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -165,6 +167,8 @@ function FaturaStatColumn({
 }
 
 export function CartoesView() {
+  const [novoCartaoOpen, setNovoCartaoOpen] = React.useState(false)
+  const [cards, setCards] = React.useState(() => [...CARTOES_PREVIEW])
   const { utilized, availablePct } = getLimitUsagePercents(FATURA_RESUMO)
 
   return (
@@ -198,7 +202,12 @@ export function CartoesView() {
               />
               Configurações
             </Button>
-            <Button type="button" variant="default" size="lg">
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              onClick={() => setNovoCartaoOpen(true)}
+            >
               <DsIcon
                 icon={Icons.add}
                 className="size-4"
@@ -209,12 +218,18 @@ export function CartoesView() {
           </div>
         </header>
 
+        <NovoCartaoDrawer
+          open={novoCartaoOpen}
+          onOpenChange={setNovoCartaoOpen}
+          onSubmit={(card) => setCards((prev) => [card, ...prev])}
+        />
+
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-start xl:gap-10">
           <section
             aria-label="Cartões corporativos"
             className="flex flex-col gap-4 lg:sticky lg:top-8 lg:self-start lg:gap-6"
           >
-            {CARTOES_PREVIEW.map((c) => (
+            {cards.map((c) => (
               <CartoesPreviewCard key={c.id} card={c} />
             ))}
           </section>
