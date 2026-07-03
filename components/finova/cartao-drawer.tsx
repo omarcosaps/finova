@@ -29,6 +29,8 @@ import {
   CARTAO_BANDEIRAS,
   createCorporateCardFromForm,
   getDefaultNovoCartaoFormValues,
+  getNovoCartaoFormValuesFromCard,
+  updateCorporateCardFromForm,
   validateNovoCartaoForm,
   type CardBrand,
   type CorporateCard,
@@ -36,47 +38,72 @@ import {
   type NovoCartaoFormValues,
 } from "@/lib/cartoes-mock"
 
-type NovoCartaoDrawerProps = {
+export type CartaoDrawerMode = "create" | "edit"
+
+type CartaoDrawerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  mode?: CartaoDrawerMode
+  /** Cartão a editar quando `mode === "edit"`. */
+  card?: CorporateCard | null
   onSubmit?: (card: CorporateCard, form: NovoCartaoFormValues) => void
+}
+
+const COPY: Record<CartaoDrawerMode, { title: string; submit: string; saving: string }> = {
+  create: { title: "Novo cartão", submit: "Salvar cartão", saving: "Salvando…" },
+  edit: { title: "Editar cartão", submit: "Salvar alterações", saving: "Salvando…" },
 }
 
 function filterDayInput(value: string) {
   return value.replace(/\D/g, "").slice(0, 2)
 }
 
-export function NovoCartaoDrawer({
+export function CartaoDrawer({
   open,
   onOpenChange,
+  mode = "create",
+  card = null,
   onSubmit,
-}: NovoCartaoDrawerProps) {
+}: CartaoDrawerProps) {
   const [form, setForm] = React.useState<NovoCartaoFormValues>(() =>
     getDefaultNovoCartaoFormValues()
   )
   const [errors, setErrors] = React.useState<NovoCartaoFieldErrors>({})
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [wasOpen, setWasOpen] = React.useState(false)
 
-  const resetForm = React.useCallback(() => {
-    setForm(getDefaultNovoCartaoFormValues())
+  const getInitialValues = React.useCallback((): NovoCartaoFormValues => {
+    if (mode === "edit" && card) {
+      return getNovoCartaoFormValuesFromCard(card)
+    }
+    return getDefaultNovoCartaoFormValues()
+  }, [mode, card])
+
+  // Sincroniza o formulário com o cartão selecionado a cada abertura do drawer.
+  // Ajustar estado durante o render é o padrão recomendado para "resetar ao
+  // mudar de prop", evitando um efeito que dispara re-renders em cascata.
+  if (open && !wasOpen) {
+    setWasOpen(true)
+    setForm(getInitialValues())
     setErrors({})
     setIsSubmitting(false)
-  }, [])
+  } else if (!open && wasOpen) {
+    setWasOpen(false)
+  }
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
-      resetForm()
+      setIsSubmitting(false)
     }
     onOpenChange(nextOpen)
   }
 
   React.useEffect(() => {
-    if (open) {
-      const timer = window.setTimeout(() => {
-        document.getElementById("novo-cartao-nome")?.focus()
-      }, 0)
-      return () => window.clearTimeout(timer)
-    }
+    if (!open) return
+    const timer = window.setTimeout(() => {
+      document.getElementById("cartao-drawer-nome")?.focus()
+    }, 0)
+    return () => window.clearTimeout(timer)
   }, [open])
 
   const updateField = <K extends keyof NovoCartaoFormValues>(
@@ -103,19 +130,23 @@ export function NovoCartaoDrawer({
     setIsSubmitting(true)
     await new Promise((resolve) => window.setTimeout(resolve, 300))
 
-    const card = createCorporateCardFromForm(form)
-    onSubmit?.(card, form)
-    console.log("Novo cartão (mock):", { card, form })
+    const result =
+      mode === "edit" && card
+        ? updateCorporateCardFromForm(card, form)
+        : createCorporateCardFromForm(form)
+    onSubmit?.(result, form)
+    console.log(`Cartão (${mode}, mock):`, { card: result, form })
 
-    resetForm()
     onOpenChange(false)
   }
+
+  const copy = COPY[mode]
 
   return (
     <Drawer open={open} onOpenChange={handleOpenChange} direction="right">
       <DrawerContent className="h-full max-h-none sm:max-w-lg">
         <DrawerHeader className="border-b border-border">
-          <DrawerTitle>Novo cartão</DrawerTitle>
+          <DrawerTitle>{copy.title}</DrawerTitle>
         </DrawerHeader>
 
         <form
@@ -126,11 +157,11 @@ export function NovoCartaoDrawer({
           <div className="flex-1 overflow-y-auto px-4 py-4">
             <FieldGroup>
               <Field data-invalid={errors.name ? true : undefined}>
-                  <FieldLabel htmlFor="novo-cartao-nome">
+                  <FieldLabel htmlFor="cartao-drawer-nome">
                     Nome do cartão
                   </FieldLabel>
                   <Input
-                    id="novo-cartao-nome"
+                    id="cartao-drawer-nome"
                     value={form.name}
                     onChange={(event) =>
                       updateField("name", event.target.value)
@@ -138,23 +169,23 @@ export function NovoCartaoDrawer({
                     placeholder="Ex.: Cartão Marketing"
                     aria-invalid={errors.name ? true : undefined}
                     aria-describedby={
-                      errors.name ? "novo-cartao-nome-error" : undefined
+                      errors.name ? "cartao-drawer-nome-error" : undefined
                     }
                     autoComplete="off"
                   />
                   {errors.name ? (
-                    <FieldError id="novo-cartao-nome-error">
+                    <FieldError id="cartao-drawer-nome-error">
                       {errors.name}
                     </FieldError>
                   ) : null}
                 </Field>
 
                 <Field data-invalid={errors.limitCents ? true : undefined}>
-                  <FieldLabel htmlFor="novo-cartao-limite">
+                  <FieldLabel htmlFor="cartao-drawer-limite">
                     Limite do cartão
                   </FieldLabel>
                   <CurrencyInput
-                    id="novo-cartao-limite"
+                    id="cartao-drawer-limite"
                     valueCents={form.limitCents}
                     onValueCentsChange={(cents) =>
                       updateField("limitCents", cents)
@@ -162,11 +193,11 @@ export function NovoCartaoDrawer({
                     placeholder="0,00"
                     aria-invalid={errors.limitCents ? true : undefined}
                     aria-describedby={
-                      errors.limitCents ? "novo-cartao-limite-error" : undefined
+                      errors.limitCents ? "cartao-drawer-limite-error" : undefined
                     }
                   />
                   {errors.limitCents ? (
-                    <FieldError id="novo-cartao-limite-error">
+                    <FieldError id="cartao-drawer-limite-error">
                       {errors.limitCents}
                     </FieldError>
                   ) : null}
@@ -174,11 +205,11 @@ export function NovoCartaoDrawer({
 
                 <div className="grid gap-7 sm:grid-cols-2">
                   <Field data-invalid={errors.closingDay ? true : undefined}>
-                    <FieldLabel htmlFor="novo-cartao-fechamento">
+                    <FieldLabel htmlFor="cartao-drawer-fechamento">
                       Dia de fechamento da fatura
                     </FieldLabel>
                     <Input
-                      id="novo-cartao-fechamento"
+                      id="cartao-drawer-fechamento"
                       value={form.closingDay}
                       onChange={(event) =>
                         updateField(
@@ -191,24 +222,24 @@ export function NovoCartaoDrawer({
                       aria-invalid={errors.closingDay ? true : undefined}
                       aria-describedby={
                         errors.closingDay
-                          ? "novo-cartao-fechamento-error"
+                          ? "cartao-drawer-fechamento-error"
                           : undefined
                       }
                       autoComplete="off"
                     />
                     {errors.closingDay ? (
-                      <FieldError id="novo-cartao-fechamento-error">
+                      <FieldError id="cartao-drawer-fechamento-error">
                         {errors.closingDay}
                       </FieldError>
                     ) : null}
                   </Field>
 
                   <Field data-invalid={errors.dueDay ? true : undefined}>
-                    <FieldLabel htmlFor="novo-cartao-vencimento">
+                    <FieldLabel htmlFor="cartao-drawer-vencimento">
                       Dia de vencimento da fatura
                     </FieldLabel>
                     <Input
-                      id="novo-cartao-vencimento"
+                      id="cartao-drawer-vencimento"
                       value={form.dueDay}
                       onChange={(event) =>
                         updateField("dueDay", filterDayInput(event.target.value))
@@ -218,13 +249,13 @@ export function NovoCartaoDrawer({
                       aria-invalid={errors.dueDay ? true : undefined}
                       aria-describedby={
                         errors.dueDay
-                          ? "novo-cartao-vencimento-error"
+                          ? "cartao-drawer-vencimento-error"
                           : undefined
                       }
                       autoComplete="off"
                     />
                     {errors.dueDay ? (
-                      <FieldError id="novo-cartao-vencimento-error">
+                      <FieldError id="cartao-drawer-vencimento-error">
                         {errors.dueDay}
                       </FieldError>
                     ) : null}
@@ -232,7 +263,7 @@ export function NovoCartaoDrawer({
                 </div>
 
                 <Field data-invalid={errors.brand ? true : undefined}>
-                  <FieldLabel htmlFor="novo-cartao-bandeira">
+                  <FieldLabel htmlFor="cartao-drawer-bandeira">
                     Bandeira do cartão
                   </FieldLabel>
                   <Select
@@ -242,11 +273,11 @@ export function NovoCartaoDrawer({
                     }
                   >
                     <SelectTrigger
-                      id="novo-cartao-bandeira"
+                      id="cartao-drawer-bandeira"
                       className="w-full"
                       aria-invalid={errors.brand ? true : undefined}
                       aria-describedby={
-                        errors.brand ? "novo-cartao-bandeira-error" : undefined
+                        errors.brand ? "cartao-drawer-bandeira-error" : undefined
                       }
                     >
                       <SelectValue placeholder="Selecione a bandeira" />
@@ -260,7 +291,7 @@ export function NovoCartaoDrawer({
                     </SelectContent>
                   </Select>
                   {errors.brand ? (
-                    <FieldError id="novo-cartao-bandeira-error">
+                    <FieldError id="cartao-drawer-bandeira-error">
                       {errors.brand}
                     </FieldError>
                   ) : null}
@@ -278,7 +309,7 @@ export function NovoCartaoDrawer({
               Cancelar
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando…" : "Salvar cartão"}
+              {isSubmitting ? copy.saving : copy.submit}
             </Button>
           </DrawerFooter>
         </form>

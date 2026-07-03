@@ -4,8 +4,11 @@ import * as React from "react"
 import Link from "next/link"
 
 import { DsIcon, Icons } from "@/app/styleguide/icons"
+import {
+  CartaoDrawer,
+  type CartaoDrawerMode,
+} from "@/components/finova/cartao-drawer"
 import { FinovaAppSidebar } from "@/components/finova/finova-app-sidebar"
-import { NovoCartaoDrawer } from "@/components/finova/novo-cartao-drawer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,13 +34,33 @@ function maskCardNumber(lastFour: string) {
   return `**** **** **** ${lastFour}`
 }
 
-function CartoesPreviewCard({ card }: { card: CorporateCard }) {
+function CartoesPreviewCard({
+  card,
+  onEdit,
+}: {
+  card: CorporateCard
+  onEdit: (card: CorporateCard) => void
+}) {
   const isPhysical = card.kind === "physical"
+
+  const handleEdit = () => onEdit(card)
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      handleEdit()
+    }
+  }
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      onClick={handleEdit}
+      onKeyDown={handleKeyDown}
+      aria-label={`Editar cartão ${card.topLabels[1]}`}
       className={cn(
-        "relative flex min-h-[11rem] flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-card via-card to-muted/90 p-5 ring-1 ring-border/80",
+        "group relative flex min-h-[11rem] cursor-pointer flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-card via-card to-muted/90 p-5 ring-1 ring-border/80 transition-shadow hover:ring-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         !isPhysical && "min-h-[10rem]"
       )}
     >
@@ -63,13 +86,28 @@ function CartoesPreviewCard({ card }: { card: CorporateCard }) {
             </>
           )}
         </div>
-        {isPhysical ? (
-          <DsIcon
-            icon={Icons.creditCard}
-            className="size-5 shrink-0 text-muted-foreground"
-            aria-hidden
-          />
-        ) : null}
+        <div className="flex shrink-0 items-center gap-1">
+          {isPhysical ? (
+            <DsIcon
+              icon={Icons.creditCard}
+              className="size-5 text-muted-foreground"
+              aria-hidden
+            />
+          ) : null}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 px-2 text-xs"
+            onClick={(event) => {
+              event.stopPropagation()
+              handleEdit()
+            }}
+            aria-label={`Editar cartão ${card.topLabels[1]}`}
+          >
+            Editar
+          </Button>
+        </div>
       </div>
 
       <p className="font-mono text-lg tracking-[0.2em] text-foreground tabular-nums">
@@ -167,9 +205,31 @@ function FaturaStatColumn({
 }
 
 export function CartoesView() {
-  const [novoCartaoOpen, setNovoCartaoOpen] = React.useState(false)
   const [cards, setCards] = React.useState(() => [...CARTOES_PREVIEW])
+  const [drawer, setDrawer] = React.useState<{
+    open: boolean
+    mode: CartaoDrawerMode
+    card: CorporateCard | null
+  }>({ open: false, mode: "create", card: null })
   const { utilized, availablePct } = getLimitUsagePercents(FATURA_RESUMO)
+
+  const openCreate = () =>
+    setDrawer({ open: true, mode: "create", card: null })
+
+  const openEdit = (card: CorporateCard) =>
+    setDrawer({ open: true, mode: "edit", card })
+
+  const handleDrawerOpenChange = (open: boolean) =>
+    setDrawer((prev) => ({ ...prev, open }))
+
+  const handleCardSubmit = (card: CorporateCard) => {
+    setCards((prev) => {
+      const exists = prev.some((c) => c.id === card.id)
+      return exists
+        ? prev.map((c) => (c.id === card.id ? card : c))
+        : [card, ...prev]
+    })
+  }
 
   return (
     <div className="flex h-screen overflow-hidden flex-col bg-background text-foreground md:flex-row">
@@ -206,7 +266,7 @@ export function CartoesView() {
               type="button"
               variant="default"
               size="lg"
-              onClick={() => setNovoCartaoOpen(true)}
+              onClick={openCreate}
             >
               <DsIcon
                 icon={Icons.add}
@@ -218,10 +278,12 @@ export function CartoesView() {
           </div>
         </header>
 
-        <NovoCartaoDrawer
-          open={novoCartaoOpen}
-          onOpenChange={setNovoCartaoOpen}
-          onSubmit={(card) => setCards((prev) => [card, ...prev])}
+        <CartaoDrawer
+          open={drawer.open}
+          onOpenChange={handleDrawerOpenChange}
+          mode={drawer.mode}
+          card={drawer.card}
+          onSubmit={handleCardSubmit}
         />
 
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,22rem)_1fr] lg:items-start xl:gap-10">
@@ -230,7 +292,7 @@ export function CartoesView() {
             className="flex flex-col gap-4 lg:sticky lg:top-8 lg:self-start lg:gap-6"
           >
             {cards.map((c) => (
-              <CartoesPreviewCard key={c.id} card={c} />
+              <CartoesPreviewCard key={c.id} card={c} onEdit={openEdit} />
             ))}
           </section>
 

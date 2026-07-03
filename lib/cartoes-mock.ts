@@ -138,22 +138,58 @@ function generateMockLastFour() {
   return String(Math.floor(1000 + Math.random() * 9000))
 }
 
+function truncateCardLabel(name: string) {
+  return name.length > 20 ? `${name.slice(0, 17)}…` : name
+}
+
 export function createCorporateCardFromForm(
   values: NovoCartaoFormValues,
   id?: string
 ): CorporateCard {
   mockCardCounter += 1
   const name = values.name.trim()
-  const displayLabel =
-    name.length > 20 ? `${name.slice(0, 17)}…` : name
 
   return {
     id: id ?? `card-new-${Date.now()}-${mockCardCounter}`,
     kind: "physical",
     cardholderLabel: name,
     lastFour: generateMockLastFour(),
-    topLabels: ["FINOVA CORPORATE", displayLabel],
+    topLabels: ["FINOVA CORPORATE", truncateCardLabel(name)],
     expiry: "12/30",
+    brand: values.brand as CardBrand,
+    limitCents: values.limitCents,
+    closingDay: parseDayField(values.closingDay) ?? undefined,
+    dueDay: parseDayField(values.dueDay) ?? undefined,
+  }
+}
+
+/** Deriva os valores do formulário a partir de um cartão existente (modo edição). */
+export function getNovoCartaoFormValuesFromCard(
+  card: CorporateCard
+): NovoCartaoFormValues {
+  return {
+    name: card.topLabels[1] ?? "",
+    limitCents: card.limitCents ?? 0,
+    closingDay: card.closingDay != null ? String(card.closingDay) : "",
+    dueDay: card.dueDay != null ? String(card.dueDay) : "",
+    brand: card.brand ?? "",
+  }
+}
+
+/**
+ * Aplica os valores do formulário a um cartão existente, preservando
+ * identidade e campos não editáveis (id, kind, lastFour, expiry, online,
+ * cardholderLabel e o primeiro rótulo do topo).
+ */
+export function updateCorporateCardFromForm(
+  card: CorporateCard,
+  values: NovoCartaoFormValues
+): CorporateCard {
+  const name = values.name.trim()
+
+  return {
+    ...card,
+    topLabels: [card.topLabels[0], truncateCardLabel(name)],
     brand: values.brand as CardBrand,
     limitCents: values.limitCents,
     closingDay: parseDayField(values.closingDay) ?? undefined,
@@ -178,6 +214,10 @@ export const CARTOES_PREVIEW: CorporateCard[] = [
     lastFour: "9212",
     topLabels: ["FINOVA CORPORATE", "Black"],
     expiry: "12/28",
+    brand: "mastercard",
+    limitCents: 2_500_000,
+    closingDay: 5,
+    dueDay: 15,
   },
   {
     id: "vc-4055",
@@ -186,6 +226,10 @@ export const CARTOES_PREVIEW: CorporateCard[] = [
     lastFour: "4055",
     topLabels: ["VIRTUAL", "Marketing & Ads"],
     online: true,
+    brand: "visa",
+    limitCents: 800_000,
+    closingDay: 10,
+    dueDay: 20,
   },
 ]
 
