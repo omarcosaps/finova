@@ -22,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { exportTransacoesToPdf } from "@/lib/export-transacoes-pdf"
 import {
   buildTransacoesList,
   formatBRL,
@@ -141,7 +142,14 @@ export function TransacoesView() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button type="button" variant="default" size="lg">
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              onClick={() =>
+                void exportTransacoesToPdf({ transactions: slice, period })
+              }
+            >
               <DsIcon
                 icon={Icons.download}
                 className="size-4"
