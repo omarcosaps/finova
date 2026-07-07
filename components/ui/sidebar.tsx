@@ -61,7 +61,7 @@ function SidebarBrand({
   title,
   ...props
 }: React.ComponentProps<"div"> & {
-  logo: React.ReactNode
+  logo?: React.ReactNode
   title: string
 }) {
   return (
@@ -70,14 +70,16 @@ function SidebarBrand({
       className={cn("flex items-center gap-3", className)}
       {...props}
     >
-      <div
-        className={cn(
-          "flex size-10 shrink-0 items-center justify-center rounded-xl",
-          "bg-[#4ADE80] text-neutral-950 [&_svg]:size-5"
-        )}
-      >
-        {logo}
-      </div>
+      {logo ? (
+        <div
+          className={cn(
+            "flex size-10 shrink-0 items-center justify-center rounded-xl",
+            "bg-[#4ADE80] text-neutral-950 [&_svg]:size-5"
+          )}
+        >
+          {logo}
+        </div>
+      ) : null}
       <span className="text-lg font-semibold tracking-tight">{title}</span>
     </div>
   )
