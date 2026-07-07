@@ -100,10 +100,7 @@ export function FinovaAppSidebar({ activeItem, className }: FinovaAppSidebarProp
   return (
     <Sidebar variant="finova" className={className}>
       <SidebarHeader>
-        <SidebarBrand
-          title="Finova"
-          logo={<DsIcon icon={Icons.wallet} />}
-        />
+        <SidebarBrand title="Finova" />
       </SidebarHeader>
 
       <SidebarNav aria-label="Principal" className="min-h-0 flex-1">
