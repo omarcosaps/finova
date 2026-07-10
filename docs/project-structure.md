@@ -8,7 +8,9 @@ finova/
 ├── components/
 │   ├── ui/               # Primitivos do Design System (shadcn/Radix)
 │   └── finova/           # Composições de produto (shell, sidebar, drawers)
-├── lib/                  # Utilitários + camada de dados mock
+├── features/             # Domínios de produto (dados tipados + cálculos)
+│   └── dashboard/        # Fonte única do Resumo (types, data, utils)
+├── lib/                  # Utilitários + camada de dados mock (facades)
 ├── public/               # Assets estáticos (SVGs)
 ├── prompts/              # Prompts de workflow para agentes de IA
 ├── docs/                 # Documentação técnica (esta pasta)
@@ -39,6 +41,14 @@ Contém as rotas do App Router. Detalhes em [routing.md](routing.md).
 - [`components/finova/`](../components/finova) — composições de produto: `FinovaPageShell`, `FinovaAppSidebar`, `FinovaEmptyState`, `NovaTransacaoDrawer`, `NovoCartaoDrawer`.
 - [`components/app-providers.tsx`](../components/app-providers.tsx) — providers globais (atualmente apenas `TooltipProvider`).
 
+## `features/`
+
+Domínios de produto com dados tipados e cálculos reutilizáveis (sem UI):
+
+| Pasta | Responsabilidade |
+|---------|------------------|
+| [`dashboard/`](../features/dashboard) | Fonte única do Resumo: `types/`, `data/dashboard-mock.ts` (`DASHBOARD_MONTHS`), `utils/dashboard-calculations.ts`, barrel `index.ts`. |
+
 ## `lib/`
 
 Utilitários e a camada de dados mock (veja [ADR-004](decisions/ADR-004-mock-data-layer.md)):
@@ -49,7 +59,7 @@ Utilitários e a camada de dados mock (veja [ADR-004](decisions/ADR-004-mock-dat
 | [`currency.ts`](../lib/currency.ts) | Formatação BRL, conversão de centavos e máscara de input. |
 | [`transacoes-mock.ts`](../lib/transacoes-mock.ts) | Tipos `Transaction`, formulário, validação, `buildTransacoesList`, templates. |
 | [`cartoes-mock.ts`](../lib/cartoes-mock.ts) | Tipos de cartão corporativo, resumo de fatura, validação e factory do drawer. |
-| [`resumo-mock.ts`](../lib/resumo-mock.ts) | KPIs, fluxo de caixa, limites, transações recentes e alertas do dashboard. |
+| [`resumo-mock.ts`](../lib/resumo-mock.ts) | Facade do dashboard Resumo; reexporta `features/dashboard`. |
 | [`configuracoes-mock.ts`](../lib/configuracoes-mock.ts) | Perfil, empresa, notificações, opções de select e aparência. |
 
 ## `public/`

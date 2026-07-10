@@ -31,19 +31,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Progress } from "@/components/ui/progress"
 import {
-  BUDGET_LIMITS,
-  CASH_FLOW_DATA,
+  DASHBOARD_PERIOD_LABELS,
   formatKpiValue,
   formatTransactionAmount,
-  RECENT_TRANSACTIONS,
-  RESUMO_ALERTS,
-  RESUMO_KPIS,
-  RESUMO_PERIOD_LABELS,
-  type ResumoAlertVariant,
-  type ResumoKpi,
-  type ResumoPeriodLabel,
-  type RecentTransaction,
-} from "@/lib/resumo-mock"
+  getDashboardPeriodData,
+  type DashboardAlertVariant,
+  type DashboardKpi,
+  type DashboardPeriodLabel,
+  type DashboardRecentTransaction,
+} from "@/features/dashboard"
 import { cn } from "@/lib/utils"
 
 const cashFlowChartConfig = {
@@ -58,7 +54,7 @@ const cashFlowChartConfig = {
 } satisfies ChartConfig
 
 const ALERT_STYLES: Record<
-  ResumoAlertVariant,
+  DashboardAlertVariant,
   { container: string; dot: string }
 > = {
   destructive: {
@@ -75,7 +71,13 @@ const ALERT_STYLES: Record<
   },
 }
 
-function KpiCard({ kpi }: { kpi: ResumoKpi }) {
+function KpiCard({
+  kpi,
+  changeComparisonLabel,
+}: {
+  kpi: DashboardKpi
+  changeComparisonLabel: string
+}) {
   return (
     <Card className="flex h-32 flex-col justify-between gap-0 py-6">
       <CardHeader className="space-y-0 px-6 pb-0">
@@ -96,16 +98,18 @@ function KpiCard({ kpi }: { kpi: ResumoKpi }) {
           )}
         >
           {kpi.changeLabel}{" "}
-          <span className="text-muted-foreground">
-            em relação ao mês anterior
-          </span>
+          <span className="text-muted-foreground">{changeComparisonLabel}</span>
         </p>
       </CardContent>
     </Card>
   )
 }
 
-function TransactionRow({ transaction }: { transaction: RecentTransaction }) {
+function TransactionRow({
+  transaction,
+}: {
+  transaction: DashboardRecentTransaction
+}) {
   const isIn = transaction.direction === "in"
 
   return (
@@ -143,8 +147,9 @@ function TransactionRow({ transaction }: { transaction: RecentTransaction }) {
 }
 
 export function ResumoView() {
-  const [period, setPeriod] = React.useState<ResumoPeriodLabel>("Este Mês")
+  const [period, setPeriod] = React.useState<DashboardPeriodLabel>("Este Mês")
   const [novaTransacaoOpen, setNovaTransacaoOpen] = React.useState(false)
+  const data = getDashboardPeriodData(period)
 
   return (
     <FinovaPageShell activeItem="resumo" ariaLabel="Resumo financeiro">
@@ -176,7 +181,7 @@ export function ResumoView() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-48">
-              {RESUMO_PERIOD_LABELS.map((label) => (
+              {DASHBOARD_PERIOD_LABELS.map((label) => (
                 <DropdownMenuItem key={label} onSelect={() => setPeriod(label)}>
                   {label}
                 </DropdownMenuItem>
@@ -205,8 +210,12 @@ export function ResumoView() {
         aria-label="Indicadores financeiros"
         className="mb-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-4"
       >
-        {RESUMO_KPIS.map((kpi) => (
-          <KpiCard key={kpi.id} kpi={kpi} />
+        {data.kpis.map((kpi) => (
+          <KpiCard
+            key={kpi.id}
+            kpi={kpi}
+            changeComparisonLabel={data.changeComparisonLabel}
+          />
         ))}
       </section>
 
@@ -219,7 +228,7 @@ export function ResumoView() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1.5">
                 <CardTitle>Fluxo de Caixa</CardTitle>
-                <CardDescription>Receitas x Despesas — 2024</CardDescription>
+                <CardDescription>{data.cashFlowDescription}</CardDescription>
               </div>
               <div
                 className="flex items-center gap-4 text-xs text-muted-foreground"
@@ -240,11 +249,11 @@ export function ResumoView() {
             <ChartContainer
               config={cashFlowChartConfig}
               className="h-52 w-full aspect-auto"
-              aria-label="Gráfico de receitas e despesas por mês em 2024"
+              aria-label={`Gráfico de receitas e despesas: ${data.cashFlowDescription}`}
             >
               <BarChart
                 accessibilityLayer
-                data={CASH_FLOW_DATA}
+                data={data.cashFlow}
                 margin={{ left: 0, right: 0, top: 8, bottom: 0 }}
               >
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -254,7 +263,7 @@ export function ResumoView() {
                   axisLine={false}
                   tickMargin={8}
                   tick={({ x, y, payload }) => {
-                    const item = CASH_FLOW_DATA.find(
+                    const item = data.cashFlow.find(
                       (m) => m.month === payload.value
                     )
                     return (
@@ -302,7 +311,7 @@ export function ResumoView() {
             <CardDescription>Orçamento por categoria</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
-            {BUDGET_LIMITS.map((budget) => (
+            {data.budgetLimits.map((budget) => (
               <div key={budget.id}>
                 <div className="mb-2 flex justify-between text-sm">
                   <span className="font-medium text-foreground">
@@ -338,7 +347,7 @@ export function ResumoView() {
           </CardHeader>
           <CardContent className="px-0 pt-0">
             <div className="divide-y divide-border">
-              {RECENT_TRANSACTIONS.map((transaction) => (
+              {data.recentTransactions.map((transaction) => (
                 <TransactionRow
                   key={transaction.id}
                   transaction={transaction}
@@ -356,7 +365,7 @@ export function ResumoView() {
             </CardAction>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
-            {RESUMO_ALERTS.map((alert) => {
+            {data.alerts.map((alert) => {
               const styles = ALERT_STYLES[alert.variant]
               return (
                 <div
