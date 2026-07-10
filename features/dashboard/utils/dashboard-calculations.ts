@@ -20,7 +20,7 @@ import type {
 
 const CASH_FLOW_UNIT_CENTS = 40_500
 
-/** Lucro líquido = receitas − despesas. */
+/** Fluxo líquido = receitas − despesas. */
 export function calcNetProfitCents(receitasCents: number, despesasCents: number) {
   return receitasCents - despesasCents
 }
@@ -39,11 +39,11 @@ export function formatPercentChangeLabel(percent: number): string {
 
 /**
  * Tom da variação:
- * - receitas/lucro/saldo: alta = success, queda = destructive
+ * - receitas/fluxo/saldo: alta = success, queda = destructive
  * - despesas: queda = success, alta = destructive
  */
 export function changeToneForMetric(
-  metric: "saldo" | "receitas" | "despesas" | "lucro",
+  metric: "saldo" | "receitas" | "despesas" | "fluxo",
   percentChange: number
 ): ChangeTone {
   if (metric === "despesas") {
@@ -308,11 +308,11 @@ export function buildKpis(options: {
     "saldoCents" | "receitasCents" | "despesasCents"
   >
 }): DashboardKpi[] {
-  const currentLucro = calcNetProfitCents(
+  const currentFluxo = calcNetProfitCents(
     options.current.receitasCents,
     options.current.despesasCents
   )
-  const previousLucro = calcNetProfitCents(
+  const previousFluxo = calcNetProfitCents(
     options.previous.receitasCents,
     options.previous.despesasCents
   )
@@ -320,7 +320,7 @@ export function buildKpis(options: {
   const metrics = [
     {
       id: "saldo" as const,
-      label: "Saldo Atual",
+      label: "Saldo disponível",
       valueCents: options.current.saldoCents,
       previousCents: options.previous.saldoCents,
     },
@@ -337,10 +337,10 @@ export function buildKpis(options: {
       previousCents: options.previous.despesasCents,
     },
     {
-      id: "lucro" as const,
-      label: "Lucro Líquido",
-      valueCents: currentLucro,
-      previousCents: previousLucro,
+      id: "fluxo" as const,
+      label: "Fluxo líquido",
+      valueCents: currentFluxo,
+      previousCents: previousFluxo,
     },
   ]
 
@@ -432,9 +432,14 @@ export function changeComparisonLabelFor(
   period: DashboardPeriodLabel
 ): string {
   if (period === "Últimos 3 meses") {
-    return "em relação ao trimestre anterior"
+    return "vs. trimestre anterior"
   }
-  return "em relação ao mês anterior"
+  return "vs. mês anterior"
+}
+
+/** Subtítulo do header com o período selecionado explícito. */
+export function periodHeaderDescription(period: DashboardPeriodLabel): string {
+  return `Acompanhe o desempenho do seu negócio · ${period}`
 }
 
 export function cashFlowDescriptionFor(
@@ -442,9 +447,12 @@ export function cashFlowDescriptionFor(
   year: number
 ): string {
   if (period === "Últimos 3 meses") {
-    return `Últimos 3 meses — ${year}`
+    return `Receitas x Despesas · Últimos 3 meses — ${year}`
   }
-  return `Receitas x Despesas — ${year}`
+  if (period === "Mês passado") {
+    return `Receitas x Despesas · Mês passado — ${year}`
+  }
+  return `Receitas x Despesas · Este mês — ${year}`
 }
 
 export type { DashboardPeriodViewModel }

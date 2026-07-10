@@ -21,7 +21,7 @@ import {
  * Série mensal canônica (única fonte de verdade).
  * Âncora do produto mock: fevereiro/2026 (“Este Mês”).
  *
- * Fev: receitas 28.350 / despesas 14.850 / lucro 13.500 / saldo 42.500
+ * Fev: receitas 28.350 / despesas 14.850 / fluxo 13.500 / saldo 42.500
  * Jan: anteriores implícitos de Fev (+4,2% / −2,1%)
  * Dez: anteriores implícitos de Jan (+3,5% / +1,5%)
  */
@@ -425,8 +425,8 @@ function buildQuarterPeriodView(): DashboardPeriodViewModel {
       budgetLimits,
       infoAlerts: [
         {
-          id: "info-q-lucro",
-          title: "Lucro trimestral acima da meta",
+          id: "info-q-fluxo",
+          title: "Fluxo trimestral acima da meta",
           occurredAt: "2026-02-01T10:00:00",
         },
         ...infoAlerts,
