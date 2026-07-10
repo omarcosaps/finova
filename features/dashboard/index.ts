@@ -40,6 +40,7 @@ export {
   centsToCashFlowUnits,
   changeComparisonLabelFor,
   changeToneForMetric,
+  periodHeaderDescription,
   formatAbsoluteShortTime,
   formatBudgetLimitLabel,
   formatBudgetSpentLabel,

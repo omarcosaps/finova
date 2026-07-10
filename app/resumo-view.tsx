@@ -23,18 +23,20 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Progress } from "@/components/ui/progress"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   DASHBOARD_PERIOD_LABELS,
   formatKpiValue,
   formatTransactionAmount,
   getDashboardPeriodData,
+  periodHeaderDescription,
   type DashboardAlertVariant,
   type DashboardKpi,
   type DashboardPeriodLabel,
@@ -136,7 +138,7 @@ function TransactionRow({
       </div>
       <span
         className={cn(
-          "shrink-0 font-mono text-sm font-medium tabular-nums",
+          "shrink-0 text-sm font-medium tabular-nums",
           isIn ? "text-success-foreground" : "text-foreground"
         )}
       >
@@ -159,35 +161,35 @@ export function ResumoView() {
             Resumo Financeiro
           </h1>
           <p className="text-sm text-muted-foreground">
-            Acompanhe o desempenho do seu negócio.
+            {periodHeaderDescription(period)}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 md:gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button type="button" variant="outline" size="default">
-                <DsIcon
-                  icon={Icons.calendar}
-                  className="size-4"
-                  data-icon="inline-start"
-                />
-                {period}
-                <DsIcon
-                  icon={Icons.chevronDown}
-                  className="size-4 opacity-80"
-                  data-icon="inline-end"
-                />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-48">
+          <Select
+            value={period}
+            onValueChange={(value) =>
+              setPeriod(value as DashboardPeriodLabel)
+            }
+          >
+            <SelectTrigger
+              aria-label="Período do resumo"
+              className="min-w-44"
+            >
+              <DsIcon
+                icon={Icons.calendar}
+                className="size-4 text-muted-foreground"
+              />
+              <SelectValue placeholder="Selecione o período" />
+            </SelectTrigger>
+            <SelectContent position="popper" align="end">
               {DASHBOARD_PERIOD_LABELS.map((label) => (
-                <DropdownMenuItem key={label} onSelect={() => setPeriod(label)}>
+                <SelectItem key={label} value={label}>
                   {label}
-                </DropdownMenuItem>
+                </SelectItem>
               ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </SelectContent>
+          </Select>
 
           <Button
             type="button"
@@ -317,7 +319,7 @@ export function ResumoView() {
                   <span className="font-medium text-foreground">
                     {budget.label}
                   </span>
-                  <span className="font-mono text-xs text-muted-foreground">
+                  <span className="text-xs tabular-nums text-muted-foreground">
                     {budget.spentLabel} / {budget.limitLabel}
                   </span>
                 </div>
