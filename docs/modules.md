@@ -23,8 +23,8 @@ Legenda de status:
 - **Objetivo:** dashboard financeiro com panorama geral.
 - **Tela:** [resumo-view.tsx](../app/resumo-view.tsx) — KPIs (saldo, receitas, despesas, lucro), gráfico de fluxo de caixa, limites de gasto, últimas transações e prévia de alertas.
 - **Componentes:** `FinovaPageShell`, `NovaTransacaoDrawer`, `Card`, `Chart`, `Progress`, `Badge`, `Button`, `DropdownMenu`, `DsIcon`.
-- **Dados:** [resumo-mock.ts](../lib/resumo-mock.ts) — `RESUMO_KPIS`, `CASH_FLOW_DATA`, `BUDGET_LIMITS`, `RECENT_TRANSACTIONS`, `RESUMO_ALERTS`.
-- **Status:** completo (mock). O seletor de período é UI; o drawer de nova transação apenas registra em `console.log` (sem `onSubmit`).
+- **Dados:** [`features/dashboard/`](../features/dashboard) — série mensal canônica (`DASHBOARD_MONTHS`), cálculos em `dashboard-calculations.ts` e view-model via `getDashboardPeriodData`. [`lib/resumo-mock.ts`](../lib/resumo-mock.ts) reexporta a API para compatibilidade.
+- **Status:** completo (mock). O seletor de período deriva KPIs, gráfico, limites, transações e alertas da fonte única; o drawer de nova transação apenas registra em `console.log` (sem `onSubmit`).
 
 ## Transações
 

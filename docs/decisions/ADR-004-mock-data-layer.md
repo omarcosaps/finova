@@ -12,7 +12,7 @@ Centralizar dados, tipos, validação e factories em arquivos `lib/*-mock.ts`, u
 
 - [transacoes-mock.ts](../../lib/transacoes-mock.ts)
 - [cartoes-mock.ts](../../lib/cartoes-mock.ts)
-- [resumo-mock.ts](../../lib/resumo-mock.ts)
+- [resumo-mock.ts](../../lib/resumo-mock.ts) (facade; fonte em [`features/dashboard/`](../../features/dashboard))
 - [configuracoes-mock.ts](../../lib/configuracoes-mock.ts)
 
 Cada arquivo exporta tipos (PascalCase), constantes de dados e funções puras (validação, formatação, criação de registros). Valores monetários são mantidos em **centavos** e formatados na exibição por [currency.ts](../../lib/currency.ts).
