@@ -7,9 +7,10 @@ import {
   aggregateBudgetLimits,
   buildAlerts,
   buildBudgetLimits,
-  buildCashFlowSeries,
   buildKpis,
+  buildMonthlyCashFlowSeries,
   buildRecentTransactions,
+  buildWeeklyCashFlowSeries,
   cashFlowDescriptionFor,
   changeComparisonLabelFor,
   mergeInfoAlerts,
@@ -298,21 +299,6 @@ export const DASHBOARD_MONTHS: DashboardMonthSnapshot[] = [
 const CURRENT_MONTH_ID = "2026-02"
 const ANCHOR_DATE_ISO = "2026-02-12T14:30:00"
 
-const CHART_MONTH_ORDER = [
-  "Jan",
-  "Fev",
-  "Mar",
-  "Abr",
-  "Mai",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Set",
-  "Out",
-  "Nov",
-  "Dez",
-] as const
-
 function requireMonth(id: string): DashboardMonthSnapshot {
   const month = DASHBOARD_MONTHS.find((item) => item.id === id)
   if (!month) {
@@ -329,30 +315,9 @@ function previousMonth(id: string): DashboardMonthSnapshot {
   return DASHBOARD_MONTHS[index - 1]!
 }
 
-/**
- * Eixo Jan–Dez para o gráfico.
- * Out–Dez usam os snapshots de 2025 (histórico/projeção no mesmo eixo anual da demo).
- */
-function buildYearCashFlowMonths(): DashboardMonthSnapshot[] {
-  const byLabel: Record<(typeof CHART_MONTH_ORDER)[number], DashboardMonthSnapshot> = {
-    Out: requireMonth("2025-10"),
-    Nov: requireMonth("2025-11"),
-    Dez: requireMonth("2025-12"),
-    Jan: requireMonth("2026-01"),
-    Fev: requireMonth("2026-02"),
-    Mar: requireMonth("2026-03"),
-    Abr: requireMonth("2026-04"),
-    Mai: requireMonth("2026-05"),
-    Jun: requireMonth("2026-06"),
-    Jul: requireMonth("2026-07"),
-    Ago: requireMonth("2026-08"),
-    Set: requireMonth("2026-09"),
-  }
-
-  return CHART_MONTH_ORDER.map((label) => ({
-    ...byLabel[label],
-    monthLabel: label,
-  }))
+function anchorDayFromIso(iso: string): number {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso)
+  return match ? Number(match[3]) : 1
 }
 
 function buildMonthPeriodView(
@@ -366,12 +331,19 @@ function buildMonthPeriodView(
   const alertAnchor = useRelative
     ? ANCHOR_DATE_ISO
     : `${monthId}-28T12:00:00`
+  const highlightDay = useRelative
+    ? anchorDayFromIso(ANCHOR_DATE_ISO)
+    : undefined
 
   return {
     period,
     kpis: buildKpis({ current, previous }),
-    cashFlow: buildCashFlowSeries(buildYearCashFlowMonths(), [monthId]),
-    cashFlowDescription: cashFlowDescriptionFor(period, 2026),
+    cashFlow: buildWeeklyCashFlowSeries(current, { highlightDay }),
+    cashFlowDescription: cashFlowDescriptionFor(
+      period,
+      current.year,
+      current.monthLabel
+    ),
     changeComparisonLabel: changeComparisonLabelFor(period),
     budgetLimits,
     recentTransactions: buildRecentTransactions(current.transactions, {
@@ -408,7 +380,7 @@ function buildQuarterPeriodView(): DashboardPeriodViewModel {
   return {
     period: "Últimos 3 meses",
     kpis: buildKpis({ current: currentTotals, previous: previousTotals }),
-    cashFlow: buildCashFlowSeries(buildYearCashFlowMonths(), [
+    cashFlow: buildMonthlyCashFlowSeries(quarter, [
       "2025-12",
       "2026-01",
       "2026-02",

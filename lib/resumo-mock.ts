@@ -21,7 +21,7 @@ export type {
   DashboardPeriodLabel as ResumoPeriodLabel,
   DashboardPeriodViewModel as ResumoPeriodData,
   DashboardKpi as ResumoKpi,
-  DashboardCashFlowMonth as CashFlowMonth,
+  DashboardCashFlowPoint as CashFlowMonth,
   DashboardBudgetLimit as BudgetLimit,
   DashboardRecentTransaction as RecentTransaction,
   DashboardAlertVariant as ResumoAlertVariant,

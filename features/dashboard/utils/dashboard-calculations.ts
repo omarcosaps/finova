@@ -7,7 +7,7 @@ import type {
   DashboardAlertVariant,
   DashboardBudgetLimit,
   DashboardBudgetSeed,
-  DashboardCashFlowMonth,
+  DashboardCashFlowPoint,
   DashboardInfoAlertSeed,
   DashboardKpi,
   DashboardMonthSnapshot,
@@ -83,6 +83,115 @@ export function formatBudgetLimitLabel(cents: number): string {
 
 export function centsToCashFlowUnits(cents: number): number {
   return Math.round(cents / CASH_FLOW_UNIT_CENTS)
+}
+
+/**
+ * Distribui `totalCents` proporcionalmente aos pesos, somando exatamente o total
+ * (método do maior resto).
+ */
+export function allocateCentsByWeights(
+  totalCents: number,
+  weights: readonly number[]
+): number[] {
+  if (weights.length === 0) return []
+  const weightSum = weights.reduce((acc, w) => acc + w, 0)
+  if (weightSum <= 0) return weights.map(() => 0)
+
+  const raw = weights.map((w) => (totalCents * w) / weightSum)
+  const floors = raw.map((v) => Math.floor(v))
+  let remainder = totalCents - floors.reduce((acc, v) => acc + v, 0)
+
+  const byFraction = raw
+    .map((v, i) => ({ i, frac: v - floors[i]! }))
+    .sort((a, b) => b.frac - a.frac)
+
+  const result = [...floors]
+  for (let k = 0; k < remainder; k++) {
+    const target = byFraction[k % byFraction.length]
+    if (!target) break
+    result[target.i]! += 1
+  }
+  return result
+}
+
+type WeekBucket = {
+  label: string
+  startDay: number
+  endDay: number
+  days: number
+}
+
+/** Semanas do mês (blocos de até 7 dias), rótulos "1–7", "8–14", … */
+export function buildMonthWeekBuckets(
+  year: number,
+  monthIndexZeroBased: number
+): WeekBucket[] {
+  const daysInMonth = new Date(year, monthIndexZeroBased + 1, 0).getDate()
+  const buckets: WeekBucket[] = []
+  let start = 1
+  while (start <= daysInMonth) {
+    const end = Math.min(start + 6, daysInMonth)
+    buckets.push({
+      label: `${start}–${end}`,
+      startDay: start,
+      endDay: end,
+      days: end - start + 1,
+    })
+    start = end + 1
+  }
+  return buckets
+}
+
+/**
+ * Série semanal a partir do snapshot mensal canônico.
+ * Soma das barras = receitas/despesas do mês (mesma fonte dos KPIs).
+ */
+export function buildWeeklyCashFlowSeries(
+  month: DashboardMonthSnapshot,
+  options?: { highlightDay?: number }
+): DashboardCashFlowPoint[] {
+  const [yearStr, monthStr] = month.id.split("-")
+  const year = Number(yearStr)
+  const monthIndex = Number(monthStr) - 1
+  const buckets = buildMonthWeekBuckets(year, monthIndex)
+  const weights = buckets.map((b) => b.days)
+  const receitasParts = allocateCentsByWeights(month.receitasCents, weights)
+  const despesasParts = allocateCentsByWeights(month.despesasCents, weights)
+  const highlightDay = options?.highlightDay
+
+  return buckets.map((bucket, index) => ({
+    label: bucket.label,
+    receitas: receitasParts[index] ?? 0,
+    despesas: despesasParts[index] ?? 0,
+    highlighted:
+      highlightDay != null &&
+      highlightDay >= bucket.startDay &&
+      highlightDay <= bucket.endDay,
+  }))
+}
+
+/**
+ * Série mensal a partir dos snapshots do período (não do ano inteiro).
+ */
+export function buildMonthlyCashFlowSeries(
+  months: readonly DashboardMonthSnapshot[],
+  highlightedIds: readonly string[] = []
+): DashboardCashFlowPoint[] {
+  const highlight = new Set(highlightedIds)
+  return months.map((month) => ({
+    label: month.monthLabel,
+    receitas: month.receitasCents,
+    despesas: month.despesasCents,
+    highlighted: highlight.has(month.id),
+  }))
+}
+
+/** @deprecated Prefer `buildWeeklyCashFlowSeries` / `buildMonthlyCashFlowSeries`. */
+export function buildCashFlowSeries(
+  months: readonly DashboardMonthSnapshot[],
+  highlightedIds: readonly string[]
+): DashboardCashFlowPoint[] {
+  return buildMonthlyCashFlowSeries(months, highlightedIds)
 }
 
 export function buildBudgetLimits(
@@ -356,19 +465,6 @@ export function buildKpis(options: {
   })
 }
 
-export function buildCashFlowSeries(
-  months: readonly DashboardMonthSnapshot[],
-  highlightedIds: readonly string[]
-): DashboardCashFlowMonth[] {
-  const highlight = new Set(highlightedIds)
-  return months.map((month) => ({
-    month: month.monthLabel,
-    receitas: centsToCashFlowUnits(month.receitasCents),
-    despesas: centsToCashFlowUnits(month.despesasCents),
-    highlighted: highlight.has(month.id),
-  }))
-}
-
 export function sumSnapshots(
   months: readonly DashboardMonthSnapshot[]
 ): Pick<DashboardMonthSnapshot, "saldoCents" | "receitasCents" | "despesasCents"> {
@@ -444,15 +540,14 @@ export function periodHeaderDescription(period: DashboardPeriodLabel): string {
 
 export function cashFlowDescriptionFor(
   period: DashboardPeriodLabel,
-  year: number
+  year: number,
+  monthLabel?: string
 ): string {
   if (period === "Últimos 3 meses") {
-    return `Receitas x Despesas · Últimos 3 meses — ${year}`
+    return `Receitas x Despesas · Por mês — ${year}`
   }
-  if (period === "Mês passado") {
-    return `Receitas x Despesas · Mês passado — ${year}`
-  }
-  return `Receitas x Despesas · Este mês — ${year}`
+  const month = monthLabel ?? (period === "Mês passado" ? "Jan" : "Fev")
+  return `Receitas x Despesas · Por semana — ${month} ${year}`
 }
 
 export type { DashboardPeriodViewModel }

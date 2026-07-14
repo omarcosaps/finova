@@ -6,6 +6,7 @@ export type {
   DashboardBudgetLimit,
   DashboardBudgetSeed,
   DashboardCashFlowMonth,
+  DashboardCashFlowPoint,
   DashboardInfoAlertSeed,
   DashboardKpi,
   DashboardMonthSnapshot,
@@ -26,13 +27,17 @@ export {
 } from "@/features/dashboard/data/dashboard-mock"
 
 export {
+  allocateCentsByWeights,
   aggregateBudgetLimits,
   budgetVariantFromUsage,
   buildAlerts,
   buildBudgetLimits,
   buildCashFlowSeries,
   buildKpis,
+  buildMonthWeekBuckets,
+  buildMonthlyCashFlowSeries,
   buildRecentTransactions,
+  buildWeeklyCashFlowSeries,
   calcBudgetUsagePercent,
   calcNetProfitCents,
   calcPercentChange,
