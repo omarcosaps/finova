@@ -58,7 +58,7 @@ export type DashboardInfoAlertSeed = {
 export type DashboardPeriodViewModel = {
   period: DashboardPeriodLabel
   kpis: DashboardKpi[]
-  cashFlow: DashboardCashFlowMonth[]
+  cashFlow: DashboardCashFlowPoint[]
   cashFlowDescription: string
   changeComparisonLabel: string
   budgetLimits: DashboardBudgetLimit[]
@@ -74,12 +74,18 @@ export type DashboardKpi = {
   changeTone: ChangeTone
 }
 
-export type DashboardCashFlowMonth = {
-  month: string
+/** Ponto do gráfico de fluxo — label depende da granularidade (semana ou mês). */
+export type DashboardCashFlowPoint = {
+  label: string
+  /** Centavos — mesma unidade dos KPIs. */
   receitas: number
+  /** Centavos — mesma unidade dos KPIs. */
   despesas: number
   highlighted?: boolean
 }
+
+/** @deprecated Use `DashboardCashFlowPoint`. */
+export type DashboardCashFlowMonth = DashboardCashFlowPoint
 
 export type DashboardBudgetLimit = {
   id: string

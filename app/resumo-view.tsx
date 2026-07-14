@@ -42,6 +42,7 @@ import {
   type DashboardPeriodLabel,
   type DashboardRecentTransaction,
 } from "@/features/dashboard"
+import { formatBRL } from "@/lib/currency"
 import { cn } from "@/lib/utils"
 
 const cashFlowChartConfig = {
@@ -260,13 +261,13 @@ export function ResumoView() {
               >
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
                 <XAxis
-                  dataKey="month"
+                  dataKey="label"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
                   tick={({ x, y, payload }) => {
                     const item = data.cashFlow.find(
-                      (m) => m.month === payload.value
+                      (point) => point.label === payload.value
                     )
                     return (
                       <text
@@ -288,7 +289,41 @@ export function ResumoView() {
                 <YAxis hide domain={[0, "auto"]} />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent indicator="dashed" />}
+                  content={
+                    <ChartTooltipContent
+                      indicator="dashed"
+                      formatter={(value, name, item) => {
+                        const configLabel =
+                          cashFlowChartConfig[
+                            name as keyof typeof cashFlowChartConfig
+                          ]?.label ?? name
+                        const cents =
+                          typeof value === "number" ? value : Number(value)
+                        const indicatorColor = item.color
+                        return (
+                          <>
+                            <div
+                              className="my-0.5 w-0 shrink-0 rounded-[2px] border-[1.5px] border-dashed border-(--color-border) bg-transparent"
+                              style={
+                                {
+                                  "--color-bg": indicatorColor,
+                                  "--color-border": indicatorColor,
+                                } as React.CSSProperties
+                              }
+                            />
+                            <div className="flex flex-1 items-center justify-between gap-4 leading-none">
+                              <span className="text-muted-foreground">
+                                {configLabel}
+                              </span>
+                              <span className="font-mono font-medium text-foreground tabular-nums">
+                                {formatBRL(Number.isFinite(cents) ? cents : 0)}
+                              </span>
+                            </div>
+                          </>
+                        )
+                      }}
+                    />
+                  }
                 />
                 <Bar
                   dataKey="receitas"
