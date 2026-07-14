@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { AlterarFotoPerfilDialog } from "@/app/configuracoes/components/alterar-foto-perfil-dialog"
 import { ConfiguracoesFormRow } from "@/app/configuracoes/components/configuracoes-form-row"
 import { ConfiguracoesSectionCard } from "@/app/configuracoes/components/configuracoes-section-card"
 import { ConfiguracoesThemeSelector } from "@/app/configuracoes/components/configuracoes-theme-selector"
@@ -17,7 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -58,6 +59,14 @@ export function ConfiguracoesView() {
   const [modoCompacto, setModoCompacto] = React.useState(
     CONFIGURACOES_APARENCIA.modoCompacto
   )
+  const [alterarFotoOpen, setAlterarFotoOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    const avatarUrl = perfil.avatarUrl
+    return () => {
+      if (avatarUrl) URL.revokeObjectURL(avatarUrl)
+    }
+  }, [perfil.avatarUrl])
 
   const handleSave = () => {
     console.log("Configurações (mock):", {
@@ -66,6 +75,10 @@ export function ConfiguracoesView() {
       notificacoes,
       aparencia: { tema, modoCompacto },
     })
+  }
+
+  const handleConfirmAvatar = (avatarUrl: string) => {
+    setPerfil((prev) => ({ ...prev, avatarUrl }))
   }
 
   const toggleNotificacao = (id: ConfiguracaoNotificacao["id"], checked: boolean) => {
@@ -97,6 +110,12 @@ export function ConfiguracoesView() {
                 <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 items-center gap-4">
                     <Avatar size="lg" className="size-14">
+                      {perfil.avatarUrl ? (
+                        <AvatarImage
+                          src={perfil.avatarUrl}
+                          alt={`Foto de perfil de ${perfil.nome}`}
+                        />
+                      ) : null}
                       <AvatarFallback className="bg-primary text-base font-medium text-primary-foreground">
                         {perfil.initials}
                       </AvatarFallback>
@@ -111,10 +130,23 @@ export function ConfiguracoesView() {
                       <p className="text-xs text-muted-foreground">{perfil.papel}</p>
                     </div>
                   </div>
-                  <Button type="button" variant="link" className="h-auto px-0">
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="h-auto px-0"
+                    onClick={() => setAlterarFotoOpen(true)}
+                  >
                     Alterar foto
                   </Button>
                 </div>
+
+                <AlterarFotoPerfilDialog
+                  open={alterarFotoOpen}
+                  onOpenChange={setAlterarFotoOpen}
+                  initials={perfil.initials}
+                  currentAvatarUrl={perfil.avatarUrl}
+                  onConfirm={handleConfirmAvatar}
+                />
 
                 <ConfiguracoesFormRow
                   label="Nome completo"
