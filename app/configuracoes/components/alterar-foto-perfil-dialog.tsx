@@ -41,7 +41,8 @@ function validateProfilePhoto(file: File): string | null {
   const hasValidMime = ACCEPTED_MIME_TYPES.has(file.type)
   const hasValidExtension = ACCEPTED_EXTENSIONS.has(extension)
 
-  if (!hasValidMime && !hasValidExtension) {
+  // Ambos precisam ser válidos — rejeita se MIME ou extensão falhar.
+  if (!hasValidMime || !hasValidExtension) {
     return "Selecione uma imagem nos formatos JPG, PNG ou WEBP."
   }
 
@@ -61,6 +62,7 @@ export function AlterarFotoPerfilDialog({
 }: AlterarFotoPerfilDialogProps) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const previewUrlRef = React.useRef<string | null>(null)
+  const transferredToParentRef = React.useRef(false)
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null)
   const [error, setError] = React.useState<string | null>(null)
 
@@ -72,20 +74,34 @@ export function AlterarFotoPerfilDialog({
     setPreviewUrl(nextUrl)
   }, [])
 
-  const discardPreview = React.useCallback(() => {
-    setPreview(null)
+  const resetInputAndError = React.useCallback(() => {
     setError(null)
     if (inputRef.current) inputRef.current.value = ""
-  }, [setPreview])
+  }, [])
+
+  const discardPreview = React.useCallback(() => {
+    setPreview(null)
+    resetInputAndError()
+  }, [resetInputAndError, setPreview])
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) discardPreview()
+    if (!nextOpen) {
+      if (transferredToParentRef.current) {
+        // URL já foi transferida ao parent — não revogar.
+        transferredToParentRef.current = false
+        previewUrlRef.current = null
+        setPreviewUrl(null)
+        resetInputAndError()
+      } else {
+        discardPreview()
+      }
+    }
     onOpenChange(nextOpen)
   }
 
   React.useEffect(() => {
     return () => {
-      if (previewUrlRef.current) {
+      if (previewUrlRef.current && !transferredToParentRef.current) {
         URL.revokeObjectURL(previewUrlRef.current)
         previewUrlRef.current = null
       }
@@ -113,12 +129,13 @@ export function AlterarFotoPerfilDialog({
     if (!previewUrlRef.current) return
 
     const confirmedUrl = previewUrlRef.current
+    // Transfere ownership da blob URL para o parent sem revoke.
+    transferredToParentRef.current = true
     previewUrlRef.current = null
     setPreviewUrl(null)
-    setError(null)
-    if (inputRef.current) inputRef.current.value = ""
+    resetInputAndError()
     onConfirm(confirmedUrl)
-    onOpenChange(false)
+    handleOpenChange(false)
   }
 
   const displayUrl = previewUrl ?? currentAvatarUrl
