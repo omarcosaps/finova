@@ -4,6 +4,7 @@ export type ConfiguracoesPerfil = {
   email: string
   papel: string
   senhaUltimaAlteracao: string
+  avatarUrl: string | null
 }
 
 export type ConfiguracoesEmpresa = {
@@ -36,6 +37,7 @@ export const CONFIGURACOES_PERFIL: ConfiguracoesPerfil = {
   email: "ana@boutik.com.br",
   papel: "Administrador",
   senhaUltimaAlteracao: "Última alteração há 3 meses",
+  avatarUrl: null,
 }
 
 export const CONFIGURACOES_EMPRESA: ConfiguracoesEmpresa = {
