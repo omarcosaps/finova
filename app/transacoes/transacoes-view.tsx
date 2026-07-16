@@ -51,7 +51,7 @@ function DirectionCell({ t }: { t: Transaction }) {
         aria-hidden
       >
         <DsIcon
-          icon={isOut ? Icons.arrowUpRight : Icons.arrowDownLeft}
+          icon={isOut ? Icons.arrowDown : Icons.arrowUp}
           className={cn(
             "size-3.5",
             isOut ? "text-destructive" : "text-success-foreground"
