@@ -5,6 +5,7 @@ import * as React from "react"
 import { DsIcon, Icons } from "@/app/styleguide/icons"
 import { FinovaAppSidebar } from "@/components/finova/finova-app-sidebar"
 import { NovaTransacaoDrawer } from "@/components/finova/nova-transacao-drawer"
+import { TransactionDirectionIndicator } from "@/components/finova/transaction-direction-indicator"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -40,24 +41,9 @@ const thBase =
   "px-4 py-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
 
 function DirectionCell({ t }: { t: Transaction }) {
-  const isOut = t.direction === "out"
   return (
     <div className="flex min-w-0 items-center gap-3">
-      <div
-        className={cn(
-          "flex size-8 shrink-0 items-center justify-center rounded-full",
-          isOut ? "bg-destructive/10" : "bg-success/10"
-        )}
-        aria-hidden
-      >
-        <DsIcon
-          icon={isOut ? Icons.arrowDown : Icons.arrowUp}
-          className={cn(
-            "size-3.5",
-            isOut ? "text-destructive" : "text-success-foreground"
-          )}
-        />
-      </div>
+      <TransactionDirectionIndicator direction={t.direction} />
       <span className="min-w-0 truncate text-sm text-foreground">
         {t.description}
       </span>

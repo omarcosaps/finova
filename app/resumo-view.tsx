@@ -7,6 +7,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { DsIcon, Icons } from "@/app/styleguide/icons"
 import { FinovaPageShell } from "@/components/finova/finova-page-shell"
 import { NovaTransacaoDrawer } from "@/components/finova/nova-transacao-drawer"
+import { TransactionDirectionIndicator } from "@/components/finova/transaction-direction-indicator"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -118,18 +119,7 @@ function TransactionRow({
   return (
     <div className="flex items-center justify-between px-6 py-3">
       <div className="flex min-w-0 items-center gap-3">
-        <div
-          className={cn(
-            "flex size-8 shrink-0 items-center justify-center rounded-full",
-            isIn ? "bg-success/10 text-success-foreground" : "bg-secondary text-muted-foreground"
-          )}
-          aria-hidden
-        >
-          <DsIcon
-            icon={isIn ? Icons.arrowDownLeft : Icons.arrowUpRight}
-            className="size-3.5"
-          />
-        </div>
+        <TransactionDirectionIndicator direction={transaction.direction} />
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-foreground">
             {transaction.description}
