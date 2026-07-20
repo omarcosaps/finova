@@ -13,16 +13,26 @@ O projeto está na versão `0.1.0` ([package.json](../package.json)). Enquanto n
 - Módulo Resumo (dashboard com KPIs, fluxo de caixa, limites e alertas).
 - Módulo Configurações com componentes próprios de seção e formulário.
 - `NovaTransacaoDrawer` para criação de transações.
-- `NovoCartaoDrawer` para criação de cartões corporativos e melhorias na gestão de cartões.
+- `CartaoDrawer` para criação e edição de cartões corporativos.
 - Empty states dedicados (`FinovaEmptyState`) para Alertas, Relatórios e Categorias.
+- Exportação de transações em PDF na view de Transações.
+- Gestão de foto de perfil em Configurações (`AlterarFotoPerfilDialog`), com validação e preview.
+- Resumo: visão de contas a pagar e a receber no fluxo de caixa.
 
 ### Changed
 
 - `NovaTransacaoDrawer` passou a usar `CurrencyInput` e teve a estrutura de campos revista.
 - Refino de layout e estilos de sidebar e views.
 - Ajustes no componente Switch (estilos e cor do thumb ativo).
-- Simplificações de UI: remoção de `DrawerDescription` no `NovaTransacaoDrawer` e de `FieldSet`/`FieldLegend` desnecessários no `NovoCartaoDrawer`.
+- Simplificações de UI: remoção de `DrawerDescription` no `NovaTransacaoDrawer` e de `FieldSet`/`FieldLegend` desnecessários no drawer de cartões.
 - Remoção do ícone e simplificação do `KpiCard` no Resumo, e do `ConfiguracoesSectionCard`.
 - Atualização de dependências e do tratamento de datas.
+- `NovoCartaoDrawer` substituído por `CartaoDrawer`, unificando criação e edição de cartões.
+- Resumo migrado para o modelo de dados do dashboard; seletor de período passou de `DropdownMenu` para `Select`.
+- `SidebarBrand` simplificado: logo/símbolo opcional.
+
+### Fixed
+
+- Ícones de direção (entrada/saída) nas transações corrigidos e atualizados no registry de ícones.
 
 > Para o estado atual de cada módulo, veja [modules.md](modules.md) e [roadmap.md](roadmap.md). Ao introduzir mudanças relevantes, adicione uma entrada aqui.
