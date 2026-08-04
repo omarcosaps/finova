@@ -9,11 +9,14 @@ const inputClassName =
 const dateInputClassName =
   "pr-9 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-y-0 [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:z-10 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:w-9 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
 
-const Input = React.forwardRef<
-  HTMLInputElement,
-  React.ComponentProps<"input">
->(function Input({ className, type, ...props }, ref) {
-  const dataSlot = props["data-slot"] ?? "input"
+type InputProps = React.ComponentProps<"input"> & {
+  "data-slot"?: string
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input(
+  { className, type, "data-slot": dataSlot = "input", ...props },
+  ref
+) {
   const isGroupControl = dataSlot === "input-group-control"
 
   if (type === "date") {

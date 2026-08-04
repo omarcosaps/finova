@@ -101,11 +101,10 @@ export default function SwitchShowcasePage() {
   })
 
   const [airplaneMode, setAirplaneMode] = React.useState(false)
-  const [isDarkTheme, setIsDarkTheme] = React.useState(true)
-
-  React.useEffect(() => {
-    setIsDarkTheme(document.documentElement.classList.contains("dark"))
-  }, [])
+  const [isDarkTheme, setIsDarkTheme] = React.useState(() => {
+    if (typeof document === "undefined") return true
+    return document.documentElement.classList.contains("dark")
+  })
 
   const toggleSetting = (id: SettingId, checked: boolean) => {
     setSettings((prev) => ({ ...prev, [id]: checked }))
