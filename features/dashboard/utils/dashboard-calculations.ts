@@ -99,7 +99,7 @@ export function allocateCentsByWeights(
 
   const raw = weights.map((w) => (totalCents * w) / weightSum)
   const floors = raw.map((v) => Math.floor(v))
-  let remainder = totalCents - floors.reduce((acc, v) => acc + v, 0)
+  const remainder = totalCents - floors.reduce((acc, v) => acc + v, 0)
 
   const byFraction = raw
     .map((v, i) => ({ i, frac: v - floors[i]! }))
