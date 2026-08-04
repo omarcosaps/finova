@@ -169,11 +169,23 @@ export const TRANSACOES_TEMPLATE: Transaction[] = [
 export function buildTransacoesList(total: number = TRANSACOES_TOTAL): Transaction[] {
   const tm = TRANSACOES_TEMPLATE
   const out: Transaction[] = []
+  const today = new Date()
+
   for (let i = 0; i < total; i++) {
     const t = tm[i % tm.length]!
+    const dayOffset = i % 90
+    const d = new Date(today)
+    d.setDate(d.getDate() - dayOffset)
+    const ymd = [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, "0"),
+      String(d.getDate()).padStart(2, "0"),
+    ].join("-")
+
     out.push({
       ...t,
       id: `tx-${i + 1}`,
+      occurredAt: `${ymd}T${t.occurredAt.slice(11)}`,
     })
   }
   return out
