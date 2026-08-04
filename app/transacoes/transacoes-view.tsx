@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { DsIcon, Icons } from "@/app/styleguide/icons"
+import { EditarTransacaoDrawer } from "@/components/finova/editar-transacao-drawer"
 import { FinovaAppSidebar } from "@/components/finova/finova-app-sidebar"
 import { NovaTransacaoDrawer } from "@/components/finova/nova-transacao-drawer"
 import { TransactionDirectionIndicator } from "@/components/finova/transaction-direction-indicator"
@@ -66,9 +67,39 @@ export function TransacoesView() {
   const [page, setPage] = React.useState(0)
   const [period, setPeriod] = React.useState<TransacoesPeriodLabel>("Este Mês")
   const [novaTransacaoOpen, setNovaTransacaoOpen] = React.useState(false)
+  const [edicaoOpen, setEdicaoOpen] = React.useState(false)
+  const [transacaoEmEdicao, setTransacaoEmEdicao] =
+    React.useState<Transaction | null>(null)
   const [transactions, setTransactions] = React.useState(() =>
     buildTransacoesList(TRANSACOES_TOTAL)
   )
+
+  const handleNovaTransacaoOpenChange = (open: boolean) => {
+    if (open) {
+      setEdicaoOpen(false)
+      setTransacaoEmEdicao(null)
+    }
+    setNovaTransacaoOpen(open)
+  }
+
+  const handleOpenNovaTransacao = () => {
+    setEdicaoOpen(false)
+    setTransacaoEmEdicao(null)
+    setNovaTransacaoOpen(true)
+  }
+
+  const handleEditTransaction = (transaction: Transaction) => {
+    setNovaTransacaoOpen(false)
+    setTransacaoEmEdicao(transaction)
+    setEdicaoOpen(true)
+  }
+
+  const handleEdicaoOpenChange = (open: boolean) => {
+    setEdicaoOpen(open)
+    if (!open) {
+      setTransacaoEmEdicao(null)
+    }
+  }
 
   const filteredTransactions = React.useMemo(
     () => filterTransactionsByPeriod(transactions, period),
@@ -172,7 +203,7 @@ export function TransacoesView() {
               type="button"
               variant="default"
               size="lg"
-              onClick={() => setNovaTransacaoOpen(true)}
+              onClick={handleOpenNovaTransacao}
             >
               <DsIcon
                 icon={Icons.add}
@@ -186,10 +217,21 @@ export function TransacoesView() {
 
         <NovaTransacaoDrawer
           open={novaTransacaoOpen}
-          onOpenChange={setNovaTransacaoOpen}
+          onOpenChange={handleNovaTransacaoOpenChange}
           onSubmit={(transaction) => {
             setTransactions((prev) => [transaction, ...prev])
             setPage(0)
+          }}
+        />
+
+        <EditarTransacaoDrawer
+          open={edicaoOpen}
+          onOpenChange={handleEdicaoOpenChange}
+          transaction={transacaoEmEdicao}
+          onSubmit={(updated) => {
+            setTransactions((prev) =>
+              prev.map((item) => (item.id === updated.id ? updated : item))
+            )
           }}
         />
 
@@ -200,7 +242,9 @@ export function TransacoesView() {
           {hasResults ? (
             <Table>
               <TableCaption className="sr-only">
-                Lista de transações com data, descrição, categoria e valor
+                Lista de transações com data, descrição, categoria e valor.
+                Cada linha é editável; use Tab para focar e Enter ou Espaço para
+                abrir a edição.
               </TableCaption>
               <TableHeader>
                 <TableRow>
@@ -227,7 +271,24 @@ export function TransacoesView() {
                     ? `- ${formatBRL(t.amountCents)}`
                     : `+ ${formatBRL(t.amountCents)}`
                   return (
-                    <TableRow key={t.id}>
+                    <TableRow
+                      key={t.id}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Editar transação: ${t.description}, ${formatBRL(t.amountCents)}`}
+                      className={cn(
+                        "cursor-pointer transition-colors",
+                        "hover:bg-muted/50",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      )}
+                      onClick={() => handleEditTransaction(t)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault()
+                          handleEditTransaction(t)
+                        }
+                      }}
+                    >
                       <TableCell className="whitespace-nowrap px-4 py-4 text-sm text-muted-foreground">
                         {formatTransacaoData(t.occurredAt)}
                       </TableCell>
@@ -267,7 +328,7 @@ export function TransacoesView() {
                   type="button"
                   variant="default"
                   size="default"
-                  onClick={() => setNovaTransacaoOpen(true)}
+                  onClick={handleOpenNovaTransacao}
                 >
                   <DsIcon
                     icon={Icons.add}
