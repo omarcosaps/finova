@@ -8,6 +8,9 @@ export type Transaction = {
   category: string
   amountCents: number
   direction: TransactionDirection
+  /** ID de conta/cartão — ver `TRANSACAO_ORIGENS`. */
+  sourceId: string
+  notes: string
 }
 
 export type NovaTransacaoFormValues = {
@@ -23,6 +26,21 @@ export type NovaTransacaoFormValues = {
 
 export type NovaTransacaoFieldErrors = Partial<
   Record<keyof NovaTransacaoFormValues, string>
+>
+
+export type EdicaoTransacaoFormValues = {
+  direction: TransactionDirection
+  description: string
+  amountCents: number
+  category: string
+  /** YYYY-MM-DD */
+  date: string
+  sourceId: string
+  notes: string
+}
+
+export type EdicaoTransacaoFieldErrors = Partial<
+  Record<keyof EdicaoTransacaoFormValues, string>
 >
 
 export const TRANSACAO_CATEGORIAS: Record<
@@ -101,6 +119,80 @@ export function createTransactionFromForm(
     category: values.category,
     amountCents,
     direction: values.direction,
+    sourceId: values.sourceId,
+    notes: values.notes.trim(),
+  }
+}
+
+/** Deriva os valores do formulário de edição a partir de uma transação existente. */
+export function getEdicaoFormValuesFromTransaction(
+  transaction: Transaction
+): EdicaoTransacaoFormValues {
+  return {
+    direction: transaction.direction,
+    description: transaction.description,
+    amountCents: transaction.amountCents,
+    category: transaction.category,
+    date: transaction.occurredAt.slice(0, 10),
+    sourceId: transaction.sourceId,
+    notes: transaction.notes,
+  }
+}
+
+export function validateEdicaoTransacaoForm(
+  values: EdicaoTransacaoFormValues
+): EdicaoTransacaoFieldErrors {
+  const errors: EdicaoTransacaoFieldErrors = {}
+
+  if (!values.description.trim()) {
+    errors.description = "Informe a descrição."
+  }
+
+  if (values.amountCents <= 0) {
+    errors.amountCents = "Informe um valor maior que zero."
+  }
+
+  if (!values.category) {
+    errors.category = "Selecione uma categoria."
+  } else if (
+    !TRANSACAO_CATEGORIAS[values.direction].includes(values.category)
+  ) {
+    errors.category = "Categoria inválida para o tipo selecionado."
+  }
+
+  if (!values.date) {
+    errors.date = "Selecione a data."
+  }
+
+  if (!values.sourceId) {
+    errors.sourceId = "Selecione a conta ou cartão."
+  }
+
+  return errors
+}
+
+/**
+ * Aplica os valores do formulário de edição a uma transação existente,
+ * preservando `id` e a hora original de `occurredAt`.
+ */
+export function updateTransactionFromForm(
+  existing: Transaction,
+  values: EdicaoTransacaoFormValues
+): Transaction {
+  const timePart =
+    existing.occurredAt.length >= 19
+      ? existing.occurredAt.slice(11)
+      : "12:00:00"
+
+  return {
+    ...existing,
+    direction: values.direction,
+    description: values.description.trim(),
+    amountCents: values.amountCents,
+    category: values.category,
+    occurredAt: `${values.date}T${timePart}`,
+    sourceId: values.sourceId,
+    notes: values.notes.trim(),
   }
 }
 
@@ -115,6 +207,8 @@ export const TRANSACOES_TEMPLATE: Transaction[] = [
     category: "Estoque",
     amountCents: 420_000,
     direction: "out",
+    sourceId: "conta-corrente",
+    notes: "Pagamento referente ao pedido #1042",
   },
   {
     id: "2",
@@ -123,6 +217,8 @@ export const TRANSACOES_TEMPLATE: Transaction[] = [
     category: "Receitas",
     amountCents: 185_000,
     direction: "in",
+    sourceId: "pc-9212",
+    notes: "",
   },
   {
     id: "3",
@@ -131,6 +227,8 @@ export const TRANSACOES_TEMPLATE: Transaction[] = [
     category: "Marketing",
     amountCents: 120_000,
     direction: "out",
+    sourceId: "conta-corrente",
+    notes: "Campanha fevereiro",
   },
   {
     id: "4",
@@ -139,6 +237,8 @@ export const TRANSACOES_TEMPLATE: Transaction[] = [
     category: "Receitas",
     amountCents: 342_000,
     direction: "in",
+    sourceId: "conta-corrente",
+    notes: "",
   },
   {
     id: "5",
@@ -147,6 +247,8 @@ export const TRANSACOES_TEMPLATE: Transaction[] = [
     category: "Operacional",
     amountCents: 45_000,
     direction: "out",
+    sourceId: "conta-corrente",
+    notes: "",
   },
   {
     id: "6",
@@ -155,6 +257,8 @@ export const TRANSACOES_TEMPLATE: Transaction[] = [
     category: "Receitas",
     amountCents: 98_000,
     direction: "in",
+    sourceId: "conta-corrente",
+    notes: "",
   },
   {
     id: "7",
@@ -163,6 +267,8 @@ export const TRANSACOES_TEMPLATE: Transaction[] = [
     category: "Operacional",
     amountCents: 30_000,
     direction: "out",
+    sourceId: "vc-4055",
+    notes: "Contrato mensal",
   },
 ]
 

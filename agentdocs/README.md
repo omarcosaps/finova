@@ -18,6 +18,7 @@ agentdocs/features/<feature-slug>/
 | Slug | Status | Descrição |
 |------|--------|-----------|
 | [transacoes-filtro-periodo](features/transacoes-filtro-periodo/spec.md) | Complete | Filtro por período na listagem de Transações |
+| [modal-edicao-transacoes](features/modal-edicao-transacoes/spec.md) | Complete | Edição de transações via drawer na listagem `/transacoes` |
 
 ## Como usar
 
