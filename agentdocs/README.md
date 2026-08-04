@@ -19,6 +19,7 @@ agentdocs/features/<feature-slug>/
 |------|--------|-----------|
 | [transacoes-filtro-periodo](features/transacoes-filtro-periodo/spec.md) | Complete | Filtro por período na listagem de Transações |
 | [modal-edicao-transacoes](features/modal-edicao-transacoes/spec.md) | Complete | Edição de transações via drawer na listagem `/transacoes` |
+| [fix-drawer-edicao-nao-abre](features/fix-drawer-edicao-nao-abre/spec.md) | Draft | Bugfix: drawer de edição não abre ao clicar na transação |
 
 ## Como usar
 
