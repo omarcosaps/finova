@@ -2,6 +2,15 @@
 
 Artefatos de **spec-driven development** para features do Finova. Gerenciados pela skill instalada em `.cursor/skills/pjordan-claude-toolkit-spec-driven-development/`.
 
+## Não confundir com `.cursor/agents/`
+
+| Pasta | O que é |
+|-------|---------|
+| `agentdocs/` | Specs, plans, tasks e progress **por feature** (artefatos de trabalho) |
+| `.cursor/agents/` | Definições de **subagentes** do Cursor (personas como code-reviewer) |
+| `.cursor/rules/` | Regras persistentes do Agent |
+| `.cursor/skills/` | Workflows invocáveis (`/review`, `/fix-issue`, spec-driven) |
+
 ## Estrutura
 
 ```

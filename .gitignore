@@ -24,8 +24,14 @@
 .DS_Store
 *.pem
 
-# IDE / local tooling (may contain MCP or machine-specific config)
-/.cursor/
+# Cursor: ignore local/machine config; version shared agent config
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
+!.cursor/skills/
+!.cursor/skills/**
+!.cursor/agents/
+!.cursor/agents/**
 
 # debug
 npm-debug.log*
