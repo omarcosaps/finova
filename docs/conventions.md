@@ -1,6 +1,6 @@
 # Convenções
 
-Padrões adotados no Finova. As regras de engenharia e do Design System são a fonte de verdade em [`AGENTS.md`](../AGENTS.md); aqui consolidamos os padrões observáveis na codebase sem duplicar aquele conteúdo.
+Padrões adotados no Finova. Princípios em [`AGENTS.md`](../AGENTS.md); regras detalhadas do Agent em [`.cursor/rules/`](../.cursor/rules/). Aqui consolidamos os padrões observáveis na codebase sem duplicar aquele conteúdo.
 
 ## Nomenclatura
 
@@ -52,4 +52,4 @@ O histórico consolidado está em [changelog.md](changelog.md).
 
 ## Workflow para agentes de IA
 
-Os prompts de [prompts/](../prompts) descrevem o fluxo em três fases (Design System → componentes → páginas) e o uso do shadcn MCP para instalar/validar componentes. Ao trabalhar no projeto, siga o workflow obrigatório do [`AGENTS.md`](../AGENTS.md): ler a codebase, identificar componentes e tokens existentes, consultar o styleguide e avaliar impactos antes de implementar.
+Os prompts de [prompts/](../prompts) descrevem o fluxo em três fases (Design System → componentes → páginas) e o uso do shadcn MCP para instalar/validar componentes. Ao trabalhar no projeto, siga o workflow em [`.cursor/rules/frontend-workflow.mdc`](../.cursor/rules/frontend-workflow.mdc) e o Design System em [`.cursor/rules/design-system.mdc`](../.cursor/rules/design-system.mdc). Skills úteis: `/review`, `/fix-issue`, e a skill spec-driven em `.cursor/skills/`.

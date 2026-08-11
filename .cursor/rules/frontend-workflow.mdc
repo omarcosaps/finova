@@ -1,0 +1,58 @@
+---
+description: Workflow obrigatório antes de implementar e formato de resposta no Finova
+alwaysApply: true
+---
+
+# Frontend Workflow
+
+Antes de qualquer implementação:
+
+1. Ler a codebase.
+2. Identificar componentes existentes.
+3. Identificar tokens existentes.
+4. Consultar o Styleguide (`app/styleguide`).
+5. Avaliar impactos em funcionalidades relacionadas.
+
+Nunca assumir que um componente não existe sem procurar.
+
+## Escopo
+
+- Frontend only — sem alterações de backend salvo pedido explícito.
+- Responder em português.
+
+## Formato antes de alterar código
+
+Apresentar, depois implementar:
+
+## Diagnóstico
+
+...
+
+## Estratégia
+
+...
+
+## Arquivos impactados
+
+...
+
+## Possíveis regressões
+
+...
+
+## Bug fix
+
+1. Encontrar causa raiz.
+2. Explicar causa raiz.
+3. Propor estratégia.
+4. Implementar correção.
+
+Não criar workarounds.
+
+## Prioridades
+
+1. Reutilização
+2. Consistência
+3. Escalabilidade
+4. Performance
+5. Acessibilidade

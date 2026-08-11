@@ -1,0 +1,41 @@
+---
+description: Convenções de nomenclatura, organização de rotas e padrões TypeScript/React do Finova
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Convenções Finova
+
+Detalhes em `docs/conventions.md`. Resumo obrigatório:
+
+## Nomenclatura
+
+- Rotas em português: `/transacoes`, `/cartoes`, `/configuracoes`
+- Views por rota: `{rota}-view.tsx`
+- Composições de produto: prefixo `finova-` em `components/finova/`
+- Drawers de feature: `{acao}-drawer.tsx`
+- Mocks: `{dominio}-mock.ts` em `lib/`
+- Tipos em PascalCase; IDs de mock em kebab-case
+- Alias `@/*` aponta para a raiz do projeto
+
+## Organização
+
+- Cada rota: `page.tsx` (Server Component + metadata) + `*-view.tsx` (Client Component)
+- Componentes de uma única rota: `app/[rota]/components/`
+- Primitivos: `components/ui`; domínio: `components/finova`
+
+## Server vs Client
+
+- `page.tsx` permanece Server Component
+- Views e UI interativa declaram `"use client"`
+
+## Localização
+
+- Textos em pt-BR
+- Valores monetários em centavos, formatados via `lib/currency.ts`
+- Datas com `date-fns` / `Intl` e locale pt-BR
+
+## Git
+
+- Branches: `feat/`, `fix/`, `refactor/`, `update/`, `chore/` + kebab-case
+- Commits: Conventional Commits (`feat:`, `fix:`, `refactor:`, `chore:`)

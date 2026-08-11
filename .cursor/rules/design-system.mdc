@@ -1,0 +1,55 @@
+---
+description: Design System first — tokens, reuso de componentes e review visual no Finova
+globs: "{app,components,features}/**/*.{ts,tsx,css}"
+alwaysApply: false
+---
+
+# Design System First
+
+Antes de criar qualquer UI, consultar nesta ordem:
+
+Styleguide → Componentes → Implementação
+
+Fontes:
+
+- `app/styleguide`
+- `components/ui`
+- `components/finova`
+- tokens em `app/globals.css`
+- `docs/design-system.md`
+
+## Reuso
+
+Antes de criar um componente, perguntar: "Este componente já existe?"
+
+Se existir: reutilizar, compor ou estender. Evitar duplicação.
+
+## UI
+
+Toda interface deve:
+
+- Utilizar tokens existentes
+- Utilizar componentes existentes
+- Respeitar spacing, tipografia e cores semânticas do sistema
+
+Evitar:
+
+- Hardcoded values
+- CSS duplicado
+- Componentes redundantes
+
+## Design review
+
+Validar: espaçamento, alinhamento, hierarquia visual, estados dos componentes, responsividade.
+
+Objetivo: pixel-perfect.
+
+## Acessibilidade
+
+Validar contraste, focus states, navegação por teclado e screen readers.
+
+## Performance
+
+Avaliar re-renders, bundle impact, lazy loading e composição. Evitar overengineering.
+
+Novos componentes de Design System devem ter showcase no styleguide e entrada em `app/styleguide/navigation.ts`.
