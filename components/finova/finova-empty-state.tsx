@@ -78,9 +78,17 @@ const EMPTY_CONFIG: Record<FinovaEmptyVariant, EmptyConfig> = {
 
 type FinovaEmptyStateProps = {
   variant: FinovaEmptyVariant
+  onPrimaryAction?: () => void
+  title?: string
 }
 
-function EmptyActionButton({ action }: { action: EmptyAction }) {
+function EmptyActionButton({
+  action,
+  onAction,
+}: {
+  action: EmptyAction
+  onAction?: () => void
+}) {
   if (action.href) {
     return (
       <Button
@@ -99,13 +107,18 @@ function EmptyActionButton({ action }: { action: EmptyAction }) {
       type="button"
       variant={action.variant ?? "default"}
       size="default"
+      onClick={onAction}
     >
       {action.label}
     </Button>
   )
 }
 
-export function FinovaEmptyState({ variant }: FinovaEmptyStateProps) {
+export function FinovaEmptyState({
+  variant,
+  onPrimaryAction,
+  title,
+}: FinovaEmptyStateProps) {
   const config = EMPTY_CONFIG[variant]
 
   return (
@@ -114,7 +127,7 @@ export function FinovaEmptyState({ variant }: FinovaEmptyStateProps) {
         <EmptyMedia variant="icon">
           <DsIcon icon={Icons[config.icon]} aria-hidden />
         </EmptyMedia>
-        <EmptyTitle>{config.title}</EmptyTitle>
+        <EmptyTitle>{title ?? config.title}</EmptyTitle>
         <EmptyDescription>{config.description}</EmptyDescription>
       </EmptyHeader>
       <EmptyContent
@@ -124,7 +137,10 @@ export function FinovaEmptyState({ variant }: FinovaEmptyStateProps) {
             : undefined
         }
       >
-        <EmptyActionButton action={config.primary} />
+        <EmptyActionButton
+          action={config.primary}
+          onAction={onPrimaryAction}
+        />
         {config.secondary ? (
           <EmptyActionButton action={config.secondary} />
         ) : null}
