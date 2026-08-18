@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { AlertasRegrasList } from "@/components/finova/alertas-regras-list"
 import { ConfigurarAlertasDrawer } from "@/components/finova/configurar-alertas-drawer"
 import { FinovaEmptyState } from "@/components/finova/finova-empty-state"
 import { FinovaPageShell } from "@/components/finova/finova-page-shell"
@@ -9,6 +10,9 @@ import { Button } from "@/components/ui/button"
 import {
   getAlertasEmptyTitle,
   getDefaultConfigurarAlertasFormValues,
+  getEnabledAlertaRegras,
+  shouldShowAlertasLista,
+  type AlertaRegraId,
   type ConfigurarAlertasFormValues,
 } from "@/lib/alertas-mock"
 
@@ -19,13 +23,17 @@ export function AlertasView() {
   )
   const [hasSaved, setHasSaved] = React.useState(false)
 
-  const emptyTitle = getAlertasEmptyTitle({
+  const showLista = shouldShowAlertasLista({
     hasSaved,
     rules: savedRules,
   })
 
   const handleOpenDrawer = () => {
     setDrawerOpen(true)
+  }
+
+  const handleSelectRegra = (_id: AlertaRegraId) => {
+    handleOpenDrawer()
   }
 
   const handleSubmitRules = (rules: ConfigurarAlertasFormValues) => {
@@ -55,11 +63,21 @@ export function AlertasView() {
         </Button>
       </header>
 
-      <FinovaEmptyState
-        variant="alertas"
-        title={emptyTitle}
-        onPrimaryAction={handleOpenDrawer}
-      />
+      {showLista ? (
+        <AlertasRegrasList
+          items={getEnabledAlertaRegras(savedRules)}
+          onSelect={handleSelectRegra}
+        />
+      ) : (
+        <FinovaEmptyState
+          variant="alertas"
+          title={getAlertasEmptyTitle({
+            hasSaved,
+            rules: savedRules,
+          })}
+          onPrimaryAction={handleOpenDrawer}
+        />
+      )}
 
       <ConfigurarAlertasDrawer
         open={drawerOpen}

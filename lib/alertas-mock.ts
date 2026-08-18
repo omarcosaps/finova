@@ -1,3 +1,5 @@
+import { formatBRL } from "@/lib/currency"
+
 export type AlertaRegraId =
   | "limites-gasto"
   | "vencimento-faturas"
@@ -31,6 +33,20 @@ export type ConfigurarAlertasFieldErrors = Partial<
   Record<AlertaRegraId, string>
 >
 
+export type AlertaRegra =
+  | AlertaRegraLimitesGasto
+  | AlertaRegraVencimentoFaturas
+  | AlertaRegraTransacoesAltas
+
+export type AlertaRegraListaIcon = "wallet" | "creditCard" | "trendingUp"
+
+export type AlertaRegraListaItem = {
+  id: AlertaRegraId
+  label: string
+  thresholdLabel: string
+  icon: AlertaRegraListaIcon
+}
+
 export type AlertaRegraMeta = {
   id: AlertaRegraId
   label: string
@@ -54,6 +70,12 @@ export const ALERTA_REGRAS_META: readonly AlertaRegraMeta[] = [
     description: "Notificação imediata para valores elevados.",
   },
 ]
+
+export const ALERTA_REGRA_ICONS: Record<AlertaRegraId, AlertaRegraListaIcon> = {
+  "limites-gasto": "wallet",
+  "vencimento-faturas": "creditCard",
+  "transacoes-altas": "trendingUp",
+}
 
 const PERCENT_ERROR = "Informe um percentual entre 1 e 100."
 const DAYS_ERROR = "Informe os dias de antecedência (1 a 30)."
@@ -101,14 +123,53 @@ export function validateConfigurarAlertasForm(
   return errors
 }
 
-export function getAlertasEmptyTitle(options: {
+export function formatAlertaRegraThreshold(rule: AlertaRegra): string {
+  switch (rule.id) {
+    case "limites-gasto":
+      return `${rule.percent}% do orçamento`
+    case "vencimento-faturas": {
+      const unit = rule.days === 1 ? "dia" : "dias"
+      return `${rule.days} ${unit} de antecedência`
+    }
+    case "transacoes-altas":
+      return formatBRL(rule.amountCents)
+  }
+}
+
+export function getEnabledAlertaRegras(
+  rules: ConfigurarAlertasFormValues
+): AlertaRegraListaItem[] {
+  return ALERTA_REGRAS_META.flatMap((meta) => {
+    const rule = rules[meta.id]
+    if (!rule.enabled) {
+      return []
+    }
+
+    return [
+      {
+        id: meta.id,
+        label: meta.label,
+        thresholdLabel: formatAlertaRegraThreshold(rule),
+        icon: ALERTA_REGRA_ICONS[meta.id],
+      },
+    ]
+  })
+}
+
+export function shouldShowAlertasLista(options: {
+  hasSaved: boolean
+  rules: ConfigurarAlertasFormValues
+}): boolean {
+  if (!options.hasSaved) {
+    return false
+  }
+
+  return getEnabledAlertaRegras(options.rules).length > 0
+}
+
+export function getAlertasEmptyTitle(_options?: {
   hasSaved: boolean
   rules: ConfigurarAlertasFormValues
 }): string {
-  if (!options.hasSaved) {
-    return "Nenhum alerta"
-  }
-
-  const hasEnabled = Object.values(options.rules).some((rule) => rule.enabled)
-  return hasEnabled ? "Nenhum alerta disparado" : "Nenhum alerta"
+  return "Nenhum alerta"
 }

@@ -30,6 +30,7 @@ agentdocs/features/<feature-slug>/
 | [modal-edicao-transacoes](features/modal-edicao-transacoes/spec.md) | Complete | Edição de transações via drawer na listagem `/transacoes` |
 | [fix-drawer-edicao-nao-abre](features/fix-drawer-edicao-nao-abre/spec.md) | Draft | Bugfix: drawer de edição não abre ao clicar na transação |
 | [configurar-alertas](features/configurar-alertas/spec.md) | Complete | Drawer de regras de alerta (tipos + limiares) em `/alertas` |
+| [lista-de-alertas](features/lista-de-alertas/spec.md) | Complete | Lista das regras habilitadas na tela `/alertas` após o save |
 
 ## Como usar
 
