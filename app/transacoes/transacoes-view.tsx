@@ -144,11 +144,6 @@ export function TransacoesView() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 md:gap-3">
-            <Button type="button" variant="outline" size="default">
-              <DsIcon icon={Icons.filter} className="size-4" data-icon="inline-start" />
-              Filtrar
-            </Button>
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button type="button" variant="outline" size="default">
