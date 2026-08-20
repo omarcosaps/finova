@@ -11,7 +11,7 @@ Legenda de status:
 | Módulo | Rota | Status |
 |--------|------|--------|
 | Resumo | `/` | Completo (mock) |
-| Transações | `/transacoes` | Parcial |
+| Transações | `/transacoes` | Completo (mock) |
 | Cartões | `/cartoes` | Parcial |
 | Configurações | `/configuracoes` | Parcial |
 | Alertas | `/alertas` | Placeholder |
@@ -28,11 +28,11 @@ Legenda de status:
 
 ## Transações
 
-- **Objetivo:** listagem e criação de transações.
-- **Tela:** [transacoes-view.tsx](../app/transacoes/transacoes-view.tsx) — tabela paginada (7 por página sobre 142 registros gerados), toolbar com Filtrar, Exportar e Nova transação.
-- **Componentes:** `FinovaAppSidebar` (layout inline), `NovaTransacaoDrawer`, `Table`, `Badge`, `Button`, `DropdownMenu`.
-- **Dados:** [transacoes-mock.ts](../lib/transacoes-mock.ts) — `buildTransacoesList`, `TRANSACOES_TEMPLATE`, validação e factory do formulário.
-- **Status:** parcial. Funciona: paginação e adicionar transação ao estado local via drawer. Não funciona: Filtrar, Exportar e seletor de período.
+- **Objetivo:** listagem, criação e edição de transações.
+- **Tela:** [transacoes-view.tsx](../app/transacoes/transacoes-view.tsx) — tabela paginada (7 por página sobre 142 registros gerados), toolbar com seletor de período, Exportar e Nova Transação.
+- **Componentes:** `FinovaAppSidebar` (layout inline), `NovaTransacaoDrawer`, `EditarTransacaoDrawer`, `Table`, `Badge`, `Button`, `DropdownMenu`, `Empty`.
+- **Dados:** [transacoes-mock.ts](../lib/transacoes-mock.ts) — `buildTransacoesList`, `TRANSACOES_TEMPLATE`, validação e factory do formulário. Filtro por período em [transacoes-period.ts](../lib/transacoes-period.ts).
+- **Status:** completo (mock). Funciona: paginação, filtro por período, exportação PDF, criar e editar transação no estado local. Sem filtros avançados (categoria, direção, valor).
 
 ## Cartões
 

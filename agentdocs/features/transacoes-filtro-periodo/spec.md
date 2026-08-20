@@ -21,7 +21,7 @@ A tela de Transações (`/transacoes`) já exibe um seletor de período ("Este M
 
 ## Non-Goals
 
-- Implementar o botão "Filtrar" (filtros avançados por categoria, direção, valor) — escopo futuro.
+- Filtros avançados por categoria, direção ou valor — escopo futuro. O placeholder "Filtrar" foi removido da toolbar.
 - Integração com backend ou API real (dados permanecem em mock local).
 - Persistir período na URL ou localStorage nesta entrega.
 - Filtro por intervalo customizado (DatePicker range) — apenas os três presets existentes.
@@ -71,7 +71,7 @@ A tela de Transações (`/transacoes`) já exibe um seletor de período ("Este M
 - [x] Trocar período volta para página 1.
 - [x] Exportar PDF inclui todas as transações filtradas, com rótulo de período correto.
 - [x] Período vazio exibe mensagem amigável usando componente do Design System.
-- [x] Botão "Filtrar" permanece visualmente igual (sem ação) — fora de escopo.
+- [x] Placeholder "Filtrar" removido da toolbar (filtros avançados continuam fora de escopo).
 
 ## Dependencies
 
