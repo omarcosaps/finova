@@ -8,10 +8,13 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group"
-import { digitsToCents, formatCentsForInput } from "@/lib/currency"
+import {
+  applyCurrencyDraftKey,
+  draftToCents,
+  formatCentsForInput,
+  sanitizeCurrencyDraft,
+} from "@/lib/currency"
 import { cn } from "@/lib/utils"
-
-const MAX_CENTS = 999_999_999_99
 
 const ALLOWED_KEYS = new Set([
   "Tab",
@@ -28,6 +31,10 @@ function isShortcutKey(event: React.KeyboardEvent<HTMLInputElement>) {
   return event.ctrlKey || event.metaKey || event.altKey
 }
 
+function draftFromCents(cents: number): string {
+  return cents > 0 ? formatCentsForInput(cents) : ""
+}
+
 type CurrencyInputProps = Omit<
   React.ComponentProps<"input">,
   "value" | "onChange" | "type"
@@ -42,24 +49,44 @@ function CurrencyInput({
   onValueCentsChange,
   showPrefix = true,
   className,
-  inputMode = "numeric",
+  inputMode = "decimal",
   placeholder = "0,00",
   onKeyDown,
+  onBlur,
+  onFocus,
   ...props
 }: CurrencyInputProps) {
   const inputRef = React.useRef<HTMLInputElement>(null)
-  const displayValue =
-    valueCents > 0 ? formatCentsForInput(valueCents) : ""
+  const [isFocused, setIsFocused] = React.useState(false)
+  const [draft, setDraft] = React.useState(() => draftFromCents(valueCents))
 
-  React.useLayoutEffect(() => {
-    const input = inputRef.current
-    if (!input || document.activeElement !== input) return
-    const length = input.value.length
-    input.setSelectionRange(length, length)
-  }, [displayValue])
+  React.useEffect(() => {
+    if (isFocused) return
+    setDraft(draftFromCents(valueCents))
+  }, [valueCents, isFocused])
+
+  const commitDraft = (nextDraft: string) => {
+    setDraft(nextDraft)
+    onValueCentsChange(draftToCents(nextDraft))
+  }
+
+  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    setIsFocused(true)
+    onFocus?.(event)
+  }
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    setIsFocused(false)
+    const cents = draftToCents(draft)
+    setDraft(draftFromCents(cents))
+    if (cents !== valueCents) {
+      onValueCentsChange(cents)
+    }
+    onBlur?.(event)
+  }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onValueCentsChange(digitsToCents(event.target.value))
+    commitDraft(sanitizeCurrencyDraft(event.target.value, draft))
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -68,26 +95,25 @@ function CurrencyInput({
       return
     }
 
-    if (event.key === "Backspace" || event.key === "Delete") {
-      event.preventDefault()
-      if (valueCents > 0) {
-        onValueCentsChange(Math.floor(valueCents / 10))
-      }
-      onKeyDown?.(event)
-      return
-    }
+    const isDigit = /^\d$/.test(event.key)
+    const isSeparator = event.key === "," || event.key === "."
+    const isEditKey = event.key === "Backspace" || event.key === "Delete"
 
-    if (/^\d$/.test(event.key)) {
+    if (!isDigit && !isSeparator && !isEditKey) {
       event.preventDefault()
-      const next = valueCents * 10 + Number(event.key)
-      if (next <= MAX_CENTS) {
-        onValueCentsChange(next)
-      }
       onKeyDown?.(event)
       return
     }
 
     event.preventDefault()
+
+    const input = event.currentTarget
+    const start = input.selectionStart ?? 0
+    const end = input.selectionEnd ?? 0
+    const allSelected = draft.length > 0 && start === 0 && end === draft.length
+    const base = allSelected ? "" : draft
+
+    commitDraft(applyCurrencyDraftKey(base, event.key))
     onKeyDown?.(event)
   }
 
@@ -96,12 +122,14 @@ function CurrencyInput({
       ref={inputRef}
       type="text"
       inputMode={inputMode}
-      value={displayValue}
+      value={isFocused ? draft : draftFromCents(valueCents)}
       placeholder={placeholder}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
       className={cn(!showPrefix && className)}
       {...props}
+      onChange={handleChange}
+      onKeyDown={handleKeyDown}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
     />
   )
 
